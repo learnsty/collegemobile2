@@ -118,11 +118,12 @@ class RequestManager {
                             if($GLOBALS['env']['app.extractuploadedzip'] === TRUE){ 
                                  $x = $zip->open($target_path);
                                  if($x === TRUE){
-                                      $target_path_temp = str_replace('.zip', '', $target_path);
+                                      $target_path_temp = str_replace('.zip', '/', $target_path);
                                       $zip->extractTo($target_path_temp);
                                       $zip->close();
                                       unlink($target_path);
                                       $target_path = $target_path_temp;
+                                      sleep(5);
                                  }
                             }   
                          }

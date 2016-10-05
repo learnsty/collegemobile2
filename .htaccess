@@ -1,0 +1,9 @@
+Options -MultiViews
+ReWriteEngine On
+ReWriteRule *-[E=HTTP_CONTENT_TYPE:%{HTTP:Content-Type},L]
+
+ReWriteBase /
+ReWriteCond %{REQUEST_FILENAME} !-d
+ReWriteCond %{REQUEST_FILENAME} !-f
+
+ReWriteRule ^(.+)$ public/index.php [L]

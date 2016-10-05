@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="app.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnError="true"
+         stopOnFailure="false"
+         syntaxCheck="true"
+         verbose="true"
+><!-- syntaxCheck="false" -->
+    <testsuites>
+        <testsuite name="LearnstyPHP Test Suite">
+            <directory suffix="Case.php">./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <!--<filters>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./controllers</directory>
+            <exclude>
+                <file>./src/Illuminate/Foundation/start.php</file>
+                <file>./src/Illuminate/Foundation/Console/Optimize/config.php</file>
+                <directory>./src/Illuminate/Pagination/views</directory>
+            </exclude>
+        </whitelist>
+    </filters>-->
+</phpunit>

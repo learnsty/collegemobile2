@@ -1,0 +1,36 @@
+{
+    "es5":false,
+    "asi":true,
+    "laxbreak":true,
+    "noempty":true,
+    "maxerr":50,
+    "eqnull":false,
+    "evil":false,
+    "curly":false,
+    "eqeqeq":false,
+    "immed":false,
+    "laxcomma":true,
+    "loopfunc":false,
+    "plusplus":false,
+    "latedef":false,
+    "newcap":true,
+    "forin":false,
+    "noarg":false,
+    "sub":true,
+    "expr":false,
+    "undef":false,
+    "unused":false,
+    "boss":false,
+    "browser":true,
+    "debug":false,
+    "devel":true,
+    "globals":{
+	      "angular":true,
+          "navigator":true,
+          "device":true,
+          "console":true, 
+          "module":true,
+          "$cdvjs":true		  
+    }
+
+}

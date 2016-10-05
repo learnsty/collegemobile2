@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="en" dir="ltr" style="width:100%;height:100%;background-color:#ffffff;background-image:url('./assets/img/icons/gifs/loading.gif');background-position:50% 50%;background-repeat:no-repeat;">
+  <head>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+       <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+       <meta name="robots" content="noodp" />
+
+       <title>=@open</title>
+       
+       <meta name="description" content="this is an e-learning web application software that will enable blended learning anywhere, anytime" />
+       <meta name="googlebot" content="nofollow, noindex" />
+       <meta name="robots" content="nofollow, noodp" />
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+     
+     <noscript><meta http-equiv="refresh" content="90; URL=/?nojsmode=1" /></noscript>
+     
+       <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon.png">
+       <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144.png">
+       <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72.png">
+     
+       <link href="./favicon.ico" type="image/x-icon" rel="icon" />
+      
+
+       <link rel="stylesheet" href="./assets/css/build/built.css" type="text/css">
+
+       <!-- <script src='http://chats.collegemobile.net/socket.io/socket.io.js' type='text/javascript'></script> -->
+  </head>
+  <body ng-controller="Dandy">
+
+     <form name="" ng-submit="go()" method="post" novalidate="yes">
+         <input type="text" tabindex="1" autocorrect="no" autocomplete="no" autofocus="yes" placeholder="Email" ng-require=""><br>
+         <input type="password" tabindex="2" autocorrect="no" autocomplete="no" autosave="no" placeholder="Password" ng-require="">
+     </form>
+
+     [if:@open === "fool"] 
+        <div id="base"><span> You're going to the {{ scopeText }}</span></div>
+     [elseif:@open === "hell"]
+        <div id="maize"><span> You're not going to the {{ scopeText }}</span></div>
+     [/if] 
+
+     <h2>App Errors</h2>
+     <ul>   
+     [loop:@errors] 
+       <li><a href="#/learn/classroom/[@errors_index]">[@errors_value=id]</a><span>{{ arrive }}</span></li>
+     [/loop] 
+   </ul>  
+
+   <section class="=@flack">
+        There are no pre-orders actually for now. However, we will be begin a closed beta on the 1st October and it will be running for the entire month. Thereafter, an open beta will follow immediately. Since you're willing to participate in the closed beta, i'll send you a link to the app and also a link to the test feedback form (so you let us know what sucks and what doesn't. Please criticize unrelentingly and intensely!!!) by this coming Friday. Thanks a lot!
+
+    The COUNTDOWN is on!! Just 3 days to the #RollOut date for #CollegeMobile. Get ready to be amazed and sucked in!!
+
+    We are starting up a closed beta from 1st October, 2016. We are excited about this and above all we need all the feedback we can get on how to make #CollegeMobile better.
+
+    A closed beta is a period set aside by creators of a to-be-made-public computer software which has been developed newly that is used to test this new software among potential and also trained software testers for the purpose of receiving feedback on how well the software works and/or how easy or difficult it is to use the software.
+
+    #CollegeMobile is simply a social learning (just like Facebook) web-based software where students (or whoever) and instructors/course creators meet to teach, learn, co-create and share all sorts of learning information and provide themselves and others with experiences that can be used to make them better at what they already do or at something new.This software was created to serve corporate individuals, chronic learners, job seekers, university students.   
+
+    If you want to be a part of this closed beta, send me a private message here on Facebook containing your email and by Friday this week you should get 2 links. One to the app and the other to our feedback form which should be filled after testing.
+
+    We appreciate the time and effort you'll take out to help us make this better. And for you our potential users, we always need to give you the best.
+
+    Thanks. 
+   </section> 
+
+   <article>
+         Yes we need to do stuff about catering to the learning needs of diverse people. Blended learning has helped in this area of customizing learning paths to different individuals. however, more still needs to be done. The e-learning manifesto (http://elearningmanifesto.org/) gives an apt guide for this. At #CollegeMobile we are trying to do something about this too but using a quite different approach. We believe social learning can aid this process. We have built a platform where anyone can teach and learn at the same time in a social manner. This to us is a worthy attempt at solving the One-Size-To-Fit-All-Problem. We aren't sure this is a perfect solution but we want to keep experimenting on it to make it better. We are very interested in growing this into a viable community of learners, teachers/facilitators and co-creators. We are also signatories to the e-learning manifesto. We believe in the amount of good properly crafted e-learning can bring. We are starting a closed beta of our product from tomorrow (1st October, 2016) and it'll run for one month.
+   </article>       
+
+   <script type="text/javascript" src="./assets/js/build/built.js"></script>
+  </body>
+</html>
+
+
+

@@ -1,0 +1,5 @@
+# skip base folders
+
+/package
+/documentation
+.env

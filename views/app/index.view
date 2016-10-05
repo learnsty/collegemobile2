@@ -1,0 +1,12 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+ <title>CollegeMobile App</title>
+</head>
+<body>
+ <ul>
+  [loop:@asidemenu]
+    <li class=""><a href="#/[@asidemenu_index]" class="">[@asidemenu_value]</a></li>
+  [/loop]
+</body>
+</html>

@@ -4,21 +4,21 @@ use \Providers\Services\NativeSessionService as SessionService;
 
 class Session {
 
-     private static $instance;
+     private static $instance = NULL;
 
      private  $session_service;
  
-     private function __construct(string $driver){
+     private function __construct($driver){
       
          $this->session_service = new SessionService($driver);      
      }
 
-     public static function createInstance(){
+     public static function createInstance($driver){
 
-         if(static::$instance == NULL)
-               static::$instance = new Session();
-
-         return static::$instance;
+          if(static::$instance == NULL){
+               static::$instance = new Session($driver);
+               return static::$instance;
+          }     
      }
 
      public static function get($key){
@@ -28,12 +28,17 @@ class Session {
 
      public static function put($key, $value){
 
-        static::$instance->session_service->write($key, $value);
+        return static::$instance->session_service->write($key, $value);
      }
 
      public static function forget($key){
 
-        static::$instance->session_service->destroy($key);
+        return static::$instance->session_service->erase($key);
+     }
+
+     public static function drop(){
+
+         return static::$instance->session_service->destroy(session_id());
      }
 
      public static function token(){

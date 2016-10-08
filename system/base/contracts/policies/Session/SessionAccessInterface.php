@@ -2,17 +2,17 @@
 
 namespace Contracts\Policies;
 
-class SessionAccessInterface {
+interface SessionAccessInterface {
 
      public function open();
 
      public function close();
 
-     public function destroy(string $key);    
+     public function destroy(\string $key);    
 
-     public function read(string $key);
+     public function read(\string $key);
 
-     public function write(string $key, string $val);
+     public function write(\string $key, \string $val);
 
 
 }

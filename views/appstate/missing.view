@@ -1,10 +1,11 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
- <title>Page Not Found</title>
- <meta charset="utf-8">
+   <title>CollegeMobile - Page Not Found</title>
+   <meta charset="utf-8">
 </head>
 <body>
-  <span>=@file</span>
+  <h2>Page at =@url was not found on this server</h2>
+  <span>Lets, get you back to the begining so it's easy to find you way onwards</span>
 </body>
 </html>

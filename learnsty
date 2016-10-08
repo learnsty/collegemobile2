@@ -4,39 +4,6 @@
 
 	require_once './app.php';
 
-	/*if ( realpath($_SERVER['argv'][0]) == __FILE__ ) {
-fwrite(STDOUT,'You executed "$ php whereami.php"');
-} else {
-fwrite(STDOUT,'You executed "$ whereami.php"');
-
-// Sets up CLI environment based on SAPI and PHP version
-
-if (version_compare(phpversion(), '4.3.0', '<') || php_sapi_name() == 'cgi') {
-// Handle output buffering
-@ob_end_flush();
-ob_implicit_flush(TRUE);
-
-// PHP ini settings
-set_time_limit(0);
-ini_set('track_errors', TRUE);
-ini_set('html_errors', FALSE);
-ini_set('magic_quotes_runtime', FALSE);
-
-// Define stream constants
-define('STDIN', fopen('php://stdin', 'r'));
-define('STDOUT', fopen('php://stdout', 'w'));
-define('STDERR', fopen('php://stderr', 'w'));
-
-// Close the streams on script termination
-register_shutdown_function(
-create_function('',
-'fclose(STDIN); fclose(STDOUT); fclose(STDERR); return true;')
-);
-}
-?>
-
-}*/
-
 	$model_path = __DIR__ . '/models/';
 
     $ctrl_path = __DIR__ . '/controllers/';
@@ -87,6 +54,32 @@ create_function('',
 
         chdir('..');
 
+	}
+
+	if($command === "run:dumpautoload"){
+
+        chdir('packages');
+
+        if(count($tokens) > 0){
+
+	        switch ($tokens[0]) {
+
+	            	case 'composer':
+
+	            		exec('composer dumpautoload', $out, $errorlevel);
+
+	            	break;
+	            	default:
+                    
+            		     $errorlevel = 1;
+
+            	    break;
+	        }
+
+
+	    }
+	        
+        chdir('..'); 
 	}
 
 	if($command === "run:install"){
@@ -161,7 +154,7 @@ create_function('',
 
 		$stdinLines[] = 'env_key=37hays63ha7agd737uagde737ba'; // encryption key
 
-        write_to_file((implode('', $stdinLines), '.env');
+        write_to_file(implode('', $stdinLines), '.env');
 
         fwrite(STDOUT, PHP_EOL . "All Done. " . PHP_EOL);	
 	}
@@ -180,7 +173,7 @@ create_function('',
 
 			 write_to_file("<?php \n\n class " . ucfirst($token) . " extends Model { \n\n\t protected $table = 'fill this in'; \n\n\t protected $primaryKey = 'fill this in'; \n\n\t protected $relations = array(); \n\n\t\t public function __construct(){ \n\n\t\t parent::__construct(); \n\n\t\t }  \n\n\t } \n\n ?>", $in);
 
-			 $marker = '     "Model" => $compDir . "/../../models/Model",' . PHP_EOL;
+			 $marker = '     "\\Model" => $compDir . "/../../models/Model",' . PHP_EOL;
 
 			 $class_map_arr = file($class_maps_path . '/class_maps.php'); // FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
 
@@ -208,9 +201,9 @@ create_function('',
 
         	sleep(1);
 
-        	write_to_file("<?php \n\n class " . ucfirst($token) ." extends Controller { \n\n\t protected $params; \n\n\t\t public function __construct($params){ \n\n\t\t\t parent::__construct($params); \n\n\t\t }  \n\n\t } \n\n ?>", $in);
+        	write_to_file("<?php \n\n class " . ucfirst($token) ." extends Controller { \n\n\t protected $params; \n\n\t\t public function __construct($params){ \n\n\t\t\t parent::__construct($params); \n\n\t\t }  \n\n\t } \n\n\t protected function index($model){  \n\n\t\t # code... \n\n\t } \n\n ?>", $in);
 
-        	$marker = '     "Controller" => $compDir . "/../../controllers/Controller",' . PHP_EOL;
+        	$marker = '     "\\Controller" => $compDir . "/../../controllers/Controller",' . PHP_EOL;
 
             $class_map_arr = file($class_maps_path . 'class_maps.php'); // FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
 

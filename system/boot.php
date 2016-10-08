@@ -34,19 +34,17 @@
     ! *
     --------------------------------------------------------*/
 
-	if(!array_key_exists('loader', get_defined_vars())){
+	if(!array_key_exists('loader', get_defined_vars())) {
 
-    	   $loader = new ClassLoader(json_decode(file_get_contents("./load.json"), TRUE));
-    	   $loader->addClassMap(require __DIR__.'/base/class_maps.php');
+    	   $loader = new ClassLoader(json_decode(file_get_contents(__DIR__ . "/load.json"), TRUE));
+    	   $loader->addClassMap(require __DIR__ . '/base/class_maps.php');
     	   $loader->register(true);
-
-    	   exit(0);
 	}
 
     /*!--------------------------------------------------------
     ! 
-    ! If something goes wrong, kill the process... Naija Style!
-    !
+    ! Otherwise, if something goes wrong, kill the process... 
+    ! ^Naija Style^ 
     !
     !
     !
@@ -58,6 +56,9 @@
     ! *
     ----------------------------------------------------------*/
 
-	die('ClassLoader processing failed');
+	else { 
+        die('ClassLoader processing failed');
+        exit(1);
+    }    
 
 ?>

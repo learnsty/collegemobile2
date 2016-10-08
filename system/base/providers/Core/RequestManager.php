@@ -37,6 +37,7 @@ class RequestManager {
      public function __construct(array $httpInput){
            
           $this->maxUploadSize = $GLOBALS['env']['app.maxuploadsize'];
+          
           foreach($httpInput as $name => $value){
               if(in_array($name, $_FILES)){
                  $this->httpInput['files'][$name] = ($value === $_FILES[$name]) ? $value : $_FILES[$name];
@@ -71,9 +72,9 @@ class RequestManager {
                     }
 
                     // sanitizing file name and create unique file name
-                    $name = preg_replace("/^A-Z0-9._-/i", "-", $file['name']);
-                    $file_parts = pathinfo($name);
-                    $ext = $file_parts['extention'];
+                    $fname = preg_replace("/[^A-Z0-9._]/i", "-", $file['name']);
+                    $file_parts = pathinfo($fname);
+                    $ext = $file_parts['extension'];
                     $zip = NULL;
                     
                     if(!in_array($ext, $this->allowedFileExtentions)){
@@ -84,11 +85,12 @@ class RequestManager {
 
                     // avoid accidentally overwriting a file (collisions can and do occur)
                     do{
-                      if(!file_exists($upload_path)){ // if the directory doesn't exist, create it!
+                      if(!file_exists($upload_path)){ 
+                          // if the directory doesn't exist, create it!
                           make_folder($upload_path);
                       }    
-                      $name = get_random_from_string($file_parts['filename']);
-                      $target_path = $upload_base_dir . $upload_path . $name . '.' . $ext;
+                      $_name = get_random_from_string($file_parts['filename']);
+                      $target_path = $upload_base_dir . $upload_path . $_name . '.' . $ext;
                     }while(file_exists($target_path));
 
                     if(!is_binary_file($file['tmp_name'], $ext)){
@@ -114,7 +116,7 @@ class RequestManager {
                              $results[$name] = NULL;
                              continue;
                          }
-                         if($zip !== NULL && $result){
+                         if($ext == "zip" && $result){
                             if($GLOBALS['env']['app.extractuploadedzip'] === TRUE){ 
                                  $x = $zip->open($target_path);
                                  if($x === TRUE){
@@ -122,19 +124,21 @@ class RequestManager {
                                       $zip->extractTo($target_path_temp);
                                       $zip->close();
                                       unlink($target_path);
-                                      $target_path = $target_path_temp;
+                                      $target_path = substr($target_path_temp, 0, (count($target_path_temp)-1));
                                       sleep(5);
                                  }
                             }   
                          }
                     }else{
-                         $errors[$name]['write_error'] = 'file is already created';
+                         $errors[$name]['write_error'] = 'file has already been created';
                          $results[$name] = NULL;
                          continue;
                     }   
  
                     // set proper permissions on new file
-                    chmod($target_path, 0600); // 0644
+                    if(is_file($target_path)){
+                       chmod($target_path, 0600); // 0644
+                    }
 
                     if(count($errors[$name]) == 0){
                         unset($errors[$name]);
@@ -142,7 +146,7 @@ class RequestManager {
 
                     // cache unique name for return 
                     $_temp = explode('/', $target_path);
-                    $results[$name] = $_temp[count($_temp)-1];
+                    $results[$name] = implode('/', (array_slice($_temp, (count($_temp)-2))));
                 
                 }
            }

@@ -2,8 +2,8 @@
 
 namespace Providers\Tools;
 
-use \Session;
-use \Router;
+use Session;
+use Router;
 
 class TemplateRunner {
 
@@ -32,7 +32,7 @@ class TemplateRunner {
 
     }
 
-    private function compile($name__){
+    private function compile(\string $name__){
 
     	$view__string;
 
@@ -50,8 +50,8 @@ class TemplateRunner {
 
 		}
 
-    	$templateTokens = array('/\[\s+?(if|elseif)\:([\w\S]+)?\@(\w+)(.+)\s+?\]/i', '/(?<!\[)\=\@(\w+)(?!\])/i', '/\[\@(\w+)\=(\w+)\]/i', '/\[\s+?loop\:\@(\w+)\s+?\]/i', '/\[\s+?\/if\s+?\]/i', '/\[\s+?\/loop\s+?\]/i', ''); 
-        $templateTokensReplace  = array('<?php ${1}(${2}$${3}${4}): ?>', '<?php echo $${1}; ?>', '<?php echo $${1}[\'${2}\']; ?>', '<?php foreach($${1} as $${1}_index => $${1}_value): ?>', '<?php endif; ?>', '<?php endforeach; ?>', '');
+    	$templateTokens = array('/\[\s+?(if|elseif)\:([\w\S]+)?\@(\w+)(.+)\s+?\]/i', '/(?<!\[)\=\@(\w+)(?!\])/i', '/\[\@(\w+)\]/', '/\[\@(\w+)\=(\w+)\]/i', '/\[\s+?loop\:\@(\w+)\s+?\]/i', '/\[\s+?\/if\s+?\]/i', '/\[\s+?\/loop\s+?\]/i'); 
+        $templateTokensReplace  = array('<?php ${1}(${2}$${3}${4}): ?>', '<?php echo $${1}; ?>', '<?php echo $${1}; ?>', '<?php echo $${1}[\'${2}\']; ?>', '<?php foreach($${1} as $${1}_index => $${1}_value): ?>', '<?php endif; ?>', '<?php endforeach; ?>');
 		$templateRendered = preg_replace($templateTokens, $templateTokensReplace, $view__string);
 
 		file_put_contents($this->getCompiledFileName($name__), $templateRendered);
@@ -60,7 +60,7 @@ class TemplateRunner {
 
     }
 
-    public function render(string $view__name, array $data__array = array()){
+    public function render(\string $view__name, array $data__array = array()){
 
 		
         $__file0 = $this->getCompiledFileName($view__name);
@@ -71,7 +71,7 @@ class TemplateRunner {
 
         $__sett = NULL;
 
-        if(!isset($__viewss)){
+        if(!isset($__viewss) || $__viewss === FALSE){
 
             $__viewss = array();
         }
@@ -106,7 +106,7 @@ class TemplateRunner {
 
 	}
 
-	private function draw($__file, $__name, $vars){
+	private function draw(\string $__file, \string $__name, array $vars){
 
 	   // variables created by 'extract()' are not visible in outer or global scope	
        // so this is a safe operation within this function method (__FUNCTION__)

@@ -9,10 +9,10 @@ class NativeSessionService implements SessionAccessInterface {
 
     protected $driver;
 
-	public function __construct(string $driver = null)
-	{
-		if (isset($driver))
-		{
+	public function __construct($driver = ''){
+
+		if (isset($driver)){
+
 			$this->driver = $driver;
 		}
 
@@ -20,8 +20,8 @@ class NativeSessionService implements SessionAccessInterface {
 	}
 
 	
-	public function __destruct()
-	{
+	public function __destruct(){
+		
 		$this->close();
 	}
 
@@ -31,44 +31,57 @@ class NativeSessionService implements SessionAccessInterface {
 	}
 
 	
-	protected function getDriver()
-	{
+	public function getDriver(){
+
 		return $this->driver;
 	}
 
 	/**
-	 * Put a value in the Sentry session.
+	 * Put a value in the session.
 	 *
 	 * @param  mixed  $value
 	 * @return void
 	 */
-	public function write($key, $value){
+	public function write(string $key, string $value){
 
-		$this->setSession($key, $value);
+		return $this->setSession($key, $value);
 	}
 
 	/**
-	 * Get the Sentry session value.
+	 * Get the session value.
 	 *
+	 * @param string {$key}
 	 * @return mixed
 	 */
-	public function read($key)
-	{
+	public function read(string $key){
+
 		return $this->getSession($key);
 	}
 
 	
-	public function destroy($key)
-	{
-		$this->forgetSession($key);
+	public function destroy(string $key){
+
+		if($key !== ''){
+
+			 session_destroy();
+
+			 // session_cache_expire();
+
+			 return TRUE;
+		}
+
+		return FALSE;
 	}
 
-	private function open()
-	{
-		// Let's start the session
-		if (session_id() == '')
-		{
-			session_start();
+	public function erase(string $key){
+
+         return $this->forgetSession($key);		
+	}
+
+	public function open(){
+        // start the session
+		if (session_id() == ''){
+session_start();
 		}
 	}
 
@@ -82,7 +95,7 @@ class NativeSessionService implements SessionAccessInterface {
 		session_write_close();
 	}
 
-	private function setSession($key, $value){
+	private function setSession($key, $value, $overwrite=TRUE){
 
 		$_SESSION[$key] = serialize($value);
 	}
@@ -93,15 +106,19 @@ class NativeSessionService implements SessionAccessInterface {
 
 			return unserialize($_SESSION[$key]);
 		}
+
+		return FALSE;
 	}
 
 	
 	private function forgetSession($key){
 
-		if (isset($_SESSION[$key])){
+		if ($this->hasKey($key) && isset($_SESSION[$key])){
 
 			 unset($_SESSION[$key]);
 		}
+
+		return $this->hasKey($key);
 	}
 
 }

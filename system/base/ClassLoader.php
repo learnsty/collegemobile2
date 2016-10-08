@@ -165,7 +165,7 @@ class ClassLoader {
     {
         if (($file = $this->findFile($class)) !== NULL) {
 
-            includeFile($file);
+            $this->includeFile($file);
 
             return true;
         }
@@ -196,12 +196,12 @@ class ClassLoader {
         return NULL;
     }
 
-}
+    private function includeFile($file){
+     
+         include str_replace(basename(self::ROOT), '', self::ROOT) . $file . ".php";
+      
+    }
 
-function includeFile($file){
- 
-     include $file . ".php";
-  
-}
+ }   
 
 ?>

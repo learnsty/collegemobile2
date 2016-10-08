@@ -6,28 +6,26 @@ class Request {
 
      private static $instance = NULL;
 
-     protected static $method = NULL;
+     private $method;
 
-     protected $url_elements;
+     private $url_elements;
 
-     protected $inputManger;
+     private $inputManger;
 
-     protected $accepted_formats = array(
+     private $accepted_formats = array(
           'application/json' => 'json',
           'application/x-www-form-urlencoded' => 'html',
           'text/plain' => 'text',
           'multipart/form-data' => 'multipart'
      );
 
-     protected $format = '';
+     private $format = '';
+
+     private $base_dir = '';
 
      protected $parameters = array();
 
- 
      private function __construct(){
-
-           // thou shalt not .....
-           session_cache_limiter("must-revalidate");
 
            $this->setRequestFormat();
 
@@ -39,18 +37,16 @@ class Request {
 
      public static function createInstance(){
 
-         static::$method = static::getInfo('REQUEST_METHOD');
-
-         if(static::$instance == NULL)
+          if(static::$instance == NULL){
              static::$instance = new Request();
-
-         return static::$instance;
+             return static::$instance;
+          }   
      }
 
      public static function header($key){
          
          return static::getInfo($key);
-                 
+                
      }
 
      private static function getInfo($var){
@@ -75,8 +71,12 @@ class Request {
      private function parseRequestInput(){
           $sliced;
           $this->url_elements = explode('/', static::getInfo('PATH_INFO'));
+          $this->method = static::getInfo('REQUEST_METHOD');
+          $this->base_dir = static::getInfo('DOCUMENT_ROOT');
           $qs = static::getInfo('QUERY_STRING');
-          switch(static::$method){
+        
+
+          switch($this->method){
                case "JSONP":
                case "GET": 
                     if(isset($qs)){
@@ -122,8 +122,8 @@ class Request {
 
      private function setRequestFormat(){
          $content_type = static::getInfo('CONTENT_TYPE');
-         if(!isset($content_type)){ // this mostly works for only POST, PUT requests
-            $content_type = static::getInfo('HTTP_CONTENT_TYPE'); // this works for GET (custom from htaccess)
+         if(!isset($content_type)){ // this mostly works out for only POST, PUT requests (not GET)
+            $content_type = static::getInfo('HTTP_CONTENT_TYPE'); // this works for GET (custom .htaccess plug)
          }
          $this->format = (array_key_exists($content_type, $this->accepted_formats))? $this->accepted_formats[$content_type] : '';
      }
@@ -140,13 +140,18 @@ class Request {
 
      public static function method(){
 
-          return static::$method;
+          return static::$instance->method;
 
      }
 
      public static function referer(){
 
          return static::getInfo('HTTP_REFERER');
+     }
+
+     public static function getHost(){
+
+         return static::getInfo('HTTP_HOST');
      }
 
      public static function upload(string $file_upload_folder, &$errors){
@@ -161,6 +166,7 @@ class Request {
 
      public static function download(string $file_download_path){
 
+        # code...
      }
 
      public static function contentType(){
@@ -188,8 +194,14 @@ class Request {
      }
 
      public static function uri(){
-
-        return parse_url(static::getInfo('REQUEST_URI'), PHP_URL_PATH);
+        $uri = static::getInfo('REQUEST_URI');
+        $host = static::getInfo('HTTP_HOST');
+        if($host === 'localhost' 
+          || preg_match('/^\d{2,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(?:\:\d{2,5})?$/', $host)){
+            return str_replace('/'. $GLOBALS['env']['app.root'], '', parse_url($uri, PHP_URL_PATH));
+        }else{  
+            return parse_url($uri, PHP_URL_PATH);
+        }   
      }
 
      public static function hasCookie($key){
@@ -204,6 +216,6 @@ class Request {
           return NULL;
      }
 
-}
+ }
 
 ?>

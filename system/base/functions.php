@@ -226,7 +226,7 @@ if(! function_exists('delete_file') ){
 }
 
 if(! function_exists('reduce_boolean')){
-    function reduced_boolean($a, $b){
+    function reduce_boolean($a, $b){
       return $a && $b;
     }
 }
@@ -278,7 +278,7 @@ if(! function_exists('delete_text_from_file') ){
 }
 
 if(! function_exists('get_random') ){
-    function get_random($useText=FALSE, $len=10, $range=10){
+    function get_random_as_range($useText=FALSE, $len=10, $range=10){
         $text = array();
         for($i=0;$i < $len; $i++){
             $rnd = rand(0, $range);
@@ -289,19 +289,6 @@ if(! function_exists('get_random') ){
     }
 }
 
-if(! function_exists('object_to_array')){
-  function object_to_array($anyObj){
-         if(is_object($anyObj)){
-           $anyObj = get_object_vars($anyObj);
-       }
-       
-       if(is_array($anyObj)){
-           return array_map(__FUNCTION__, $anyObj);
-       }else{
-           return $anyObj;
-       }
-     }
-}
 
 if(! function_exists('write_to_file') ){
     function write_to_file($entry, $file, $overwrite=true){

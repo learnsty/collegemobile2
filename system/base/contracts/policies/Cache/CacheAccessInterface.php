@@ -1,11 +1,12 @@
 <?php
 
-namespace Contracts/Policies;
+namespace Contracts\Policies;
 
-interface FileAccessInterface {
+interface CacheAccessInterface {
 
+    public function set(\string $key, \string $val);
 
-
+    public function get(\string $key);
 
 }
 

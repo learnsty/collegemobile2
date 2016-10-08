@@ -4,7 +4,7 @@ use \Providers\Tools\TemplateRunner as Runner;
 
 class Response {
 
-     private static $instance;
+     private static $instance = NULL;
  
      private function __construct(){
             
@@ -14,7 +14,7 @@ class Response {
      }
 
      private function bufferOutput(){
-         if(substr_count(static::getInfo('HTTP_ACCEPT_ENCODING'), 'gzip')){
+         if(index_of(static::getInfo('HTTP_ACCEPT_ENCODING'), 'gzip') > -1){
               ob_start("ob_gzhandler");
          }else{
               ob_start();
@@ -23,10 +23,12 @@ class Response {
 
      public static function createInstance(){
 
-         if(static::$instance == NULL)
-               static::$instance = new Response();
 
-         return static::$instance;
+         if(static::$instance == NULL){
+               static::$instance = new Response();
+               return static::$instance;
+         }    
+         
      }
 
      public static function header($key, $value){
@@ -40,7 +42,7 @@ class Response {
        }else if(array_key_exists($var, $_REQUEST)){
             return $_REQUEST[$var];
        }
-       return NULL;
+       return '';
      }
 
      public static function text(){
@@ -61,7 +63,7 @@ class Response {
         
      }
 
-     public static function error(Exception $e){
+     public static function error(\Exception $e){
 
           static::header('Content-type', 'text/plain');
 
@@ -77,10 +79,12 @@ class Response {
 
      } 
 
-     private static function end(string $data = '', string $from){
-          
+     private static function end(string $data, string $from){
+
            // thou shalt not put this page into a frame for any reason (<iframe>, <frameset>)
            static::header("X-Frame-Options",  "DENY"); # SAMEORIGIN
+          
+           $GLOBALS['app']->shutDown(); 
            
            echo $data;
 
@@ -94,7 +98,7 @@ class Response {
 
      }
 
-     public static function redirect(string $route = ''){
+     public static function redirect(string $route){
 
            $base = $GLOBALS['env']['app.path.base']; 
 

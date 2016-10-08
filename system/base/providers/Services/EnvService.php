@@ -20,10 +20,10 @@ class EnvService {
 
         }
 
-        public function getConfig(string $key){
+        public function getConfig($key){
  
           if(array_key_exists($key, $this->config)){
-            return $this->config[$key];
+              return $this->config[$key];
           }
           return NULL;
         }
@@ -63,31 +63,20 @@ class EnvService {
 
         }
 
-        /*
-          "app_cookies" => array(
-             
-            'secure' => false,
-
-            'server_only' => true,
-
-            'domain_factor' => '.collegemobile.net',
-
-            'max_life' =>  24000
-          )
-        */
-
-        public function exposeEnvironment(){
+      
+        public function exposeEnvironment($root){
 
              $arr = array(
                   /* paths */
                   'app.path.base'=>$this->appPaths->base,
-                  'app.path.upload'=>$this->appPaths->storage.'/cabinet/uploads/',
+                  'app.path.upload'=>$this->appPaths->storage . '/cabinet/uploads/',
                   'app.path.assets'=>$this->appPaths->public.'/assets/', 
                   'app.path.storage'=>$this->appPaths->storage.'/',
                   'app.path.packages'=>$this->appPaths->packages.'/',
-                  'app.path.views'=>$this->appPaths->views.'/',
+                  'app.path.views'=>$this->appPaths->views . '/',
 
                   /* app specifics */
+                  'app.root'=> $root,
                   'app.status' =>$this->config['app_environment'],
                   'app.settings.cookie'=>$this->config['app_cookies'],
                   'app.extractuploadedzip'=>$this->config['app_uploads']['can_extract_zip'], #default: TRUE

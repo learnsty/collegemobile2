@@ -4,13 +4,13 @@ use \Providers\Tools\InputFilter as Filter;
 
 class Validator{
 
-    private const FAILED = "failed!";
+    const FAILED = "failed!";
 
     protected static $instance = NULL;
 
     protected static $allowed = NULL;
 
-    protected static $allowed_errors = NULL;
+    protected static $allowed_errors = false;
 
     protected static $errors = array();
 
@@ -23,8 +23,6 @@ class Validator{
     }
 
     public static function createInstance(){
-
-        static::$allow_errors = false;
 
         if(static::$instance == NULL){
             static::$instance = new Validator();

@@ -1,5 +1,7 @@
 <?php
 
+    define('LEARNSTYPHP_EXEC_ID', mt_rand(1, time()));
+
    /*!------------------------------------------------------
     ! It's only natural that we rep Naija by modifiying the
     ! default timezone for this server. Feel free to change
@@ -83,24 +85,7 @@
     --------------------------------------------------------*/
     require_once __DIR__ . '/../system/events/setup.php';
 
-    /*!------------------------------------------------------
-    ! 
-    ! It's now time to make all custom ENV variables available 
-    ! to every part of the application by exposing the $env
-    ! variable
-    !
-    !
-    !
-    ! *
-    ! *
-    ! *
-    ! *
-    ! *
-    ! *
-    --------------------------------------------------------*/
-	$env = $app->exposeEnvironment();
-
-    /*!------------------------------------------------------
+   /*!------------------------------------------------------
     ! 
     ! Start piecing together the controller action from the 
     ! activated route
@@ -117,8 +102,7 @@
     --------------------------------------------------------*/
 	$app->initHTTPResolver();
 
-
-	/*!------------------------------------------------------
+   /*!------------------------------------------------------
     ! 
     ! Lets' cross our fingers and have a good ride on the 
     ! application cycle.
@@ -133,6 +117,6 @@
     ! *
     --------------------------------------------------------*/
 
-    # compact(':-)');
+    # compact(); create_function(args, code); :-)
 
 ?>

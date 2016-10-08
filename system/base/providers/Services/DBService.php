@@ -2,6 +2,7 @@
 
 namespace Providers\Services;
 
+use \PDO;
 
 class DBService {
 
@@ -13,7 +14,7 @@ class DBService {
 	protected $param_types = array(
 		"int" => PDO::PARAM_INT,
 		"str" => PDO::PARAM_STR
-    );
+  );
 
 	protected $config; 
 
@@ -23,9 +24,9 @@ class DBService {
        
           $this->config = $config;
 
-          $this->isMSREnabled = bool ($this->config['msr_enabled']);
+          $this->isMSREnabled = (bool) $this->config['msr_enabled'];
 
-          $engines = $this->config['engines']
+          $engines = $this->config['engines'];
 
           $engine = $engines['mysql'];
 
@@ -55,7 +56,7 @@ class DBService {
 
     public function connect($base_path_env){
 
-    	 $engines = $this->config['engines']
+    	 $engines = $this->config['engines'];
 
     	 $engine = $engines['mysql'];
 
@@ -68,15 +69,15 @@ class DBService {
             }
          }
 
-    	 if($this->connectionHandle !== NULL){
+    	   if($this->connectionHandle !== NULL){
               return; // do not try to connect to the DB if we already have an active connection 
-    	 }
+    	   }
          
          try {
 
             $this->connectionString = 'mysql:host=' . $engine['hostname'] . $this->connectionString;
 
-            $this->connectionHandle = new \PDO($this->connectionString, $engine['username'], $engine['password'], $engine['settings']);
+            $this->connectionHandle = new PDO($this->connectionString, $engine['username'], $engine['password'], $engine['settings']);
 
               #$this->connectionHandle->setAttribute(PDO::FETCH_CLASS);
               $this->connectionHandle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
@@ -95,8 +96,11 @@ class DBService {
 
     }
 
-    public function pool(){
+    public function getConnection(){
 
+       return $this->connectionHandle;
     }
 
 }
+
+?>

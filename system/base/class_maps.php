@@ -39,30 +39,32 @@ return array(
 		
      /* Components */
 
-     "Router" => $compDir . "/components/Router",
-	"System" => $compDir . "/components/System",
-     "Session" => $compDir . "/components/Session",
-     "Auth" => $compDir . "/components/Auth",
-     "File" => $compDir . "/components/File",
-     "Request" => $compDir . "/components/Request",
-     "Validator" => $compDir . "/components/Validator",
-     "Response" => $compDir . "/components/Response",
-     "Logger" => $compDir . "/components/Logger",
+     "\\Router" => $compDir . "/components/Router",
+	"\\System" => $compDir . "/components/System",
+     "\\Session" => $compDir . "/components/Session",
+     "\\Auth" => $compDir . "/components/Auth",
+     "\\File" => $compDir . "/components/File",
+     "\\Request" => $compDir . "/components/Request",
+     "\\Validator" => $compDir . "/components/Validator",
+     "\\Response" => $compDir . "/components/Response",
+     "\\Logger" => $compDir . "/components/Logger",
+     "\\Cache" => $compDir . "/components/Cache",
+     "\\Helpers" => $compDir . "/components/Helpers",
 
      /* Models */
 
-     "Model" => $compDir . "/../../models/Model",
-     "User" => $compDir . "/../../models/User",
-     "LearnerData" => $compDir . "/../../models/LearnerData",
+     "\\Model" => $compDir . "/../../models/Model",
+     "\\User" => $compDir . "/../../models/User",
+     "\\LearnerData" => $compDir . "/../../models/LearnerData",
 
      /* Controllers */
 
-     "Controller" => $compDir . "/../../controllers/Controller",
-     "Login" => $compDir . "/../../controllers/Login",
-     "Register" => $compDir . "/../../controllers/Register",
-     "Scorm" => $compDir . "/../../controllers/Scorm",
-     "Learn" => $compDir . "/../../controllers/Learn",
-     "Teach" => $compDir . "/../../controllers/Teach"
+     "\\Controller" => $compDir . "/../../controllers/Controller",
+     "\\Login" => $compDir . "/../../controllers/Login",
+     "\\Register" => $compDir . "/../../controllers/Register",
+     "\\Scorm" => $compDir . "/../../controllers/Scorm",
+     "\\Learn" => $compDir . "/../../controllers/Learn",
+     "\\Teach" => $compDir . "/../../controllers/Teach"
 	 
 
 );

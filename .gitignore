@@ -1,5 +1,14 @@
-# skip base folders
+# skip os specific files/folders
 
-/package
+/_notes
+.DS_Store
+.obj
+.exe
+
+
+# skip base files/folders
+
+/hooks
+/packages
 /documentation
 .env

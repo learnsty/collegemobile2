@@ -19,7 +19,7 @@ CHANGE LOG (8) - v1.0.0-beta
  - Made configs much more robust for ease of code development
  - Included '.log' file to write logs for easy debugging
  - Removed 'url' query parameter from '.htaccess' rewrite path
- - Included command-line options for varying tasks e.g. Model Creation
+ - Included command-line options for varying tasks e.g. Model File Creation, COntroller File Creation, e.t.c
  - Included 'route' folder to serve as central location for route definitions
  - Created 'packages' folder to serve as storage for composer packages & npm modules (especially Grunt for task running)
 
@@ -40,7 +40,7 @@ CAVEATS (0)
 
 
 FINAL UPDATES FOR THIS VERSION (v1.0.0-beta) - timeline early 2017
- - Include support for events on 'System' class
+ - Include support for events on 'System' component class
  - Complete code for reporting errors to central app monitor dashboard
  - Hot fixes for known bugs
 

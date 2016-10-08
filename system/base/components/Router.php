@@ -1,6 +1,6 @@
 <?php 
 
-use \Request;
+
 
 class Router {
 
@@ -25,7 +25,7 @@ class Router {
      public static function createInstance(){
 
           if(static::$instance === NULL){
-               static::$instance = new Route();
+               static::$instance = new Router();
                return static::$instance;
           }     
      }
@@ -120,7 +120,8 @@ class Router {
 
      public function getRouteSettings(string $requestMethod, System $instance){
 
-         $models = array(), $settingsList = NULL;
+         $models = array();
+         $settingsList = NULL;
 
          $this->purgeParameters();
  

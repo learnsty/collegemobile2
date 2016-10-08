@@ -19,8 +19,14 @@ class System {
 
         $this->blindRouteHandler = NULL;
         
+        // Plain Text message instead of HTML messages.. Thank you!
+        ini_set('html_errors', '0');
         // Tell PHP to use the CLI error handler
-        set_error_handler('error_handler');
+        set_error_handler(array(&$this, 'error_handler'));
+        // Surpress Warnings
+        assert_options(ASSERT_WARNING, 0);
+        // Cacth fatal Errors
+        register_shutdown_function(array(&$this, 'shutdown'));
     }
 
     public function __destruct(){
@@ -35,28 +41,31 @@ class System {
          }     
     }
 
+   
+    public function shutdown(){
+         $fatalError = error_get_last();
+         if($fatalError != NULL){
+             $this->error_handler($fatalError['type'], $fatalError['message'], $fatalError['file'], $fatalError['line']);
+         }
+    }
+
     // A custom error handler
-    private function error_handler($errno, $errstr, $errfile, $errline){
+    public function error_handler($errno, $errstr, $errfile, $errline){
       
        $handler = self::$instance->getErrorHandler();
 
-       if(self::$instance->isCLIEnabled()){
+       if($GLOBALS['app']->inCLIMode()){
            fwrite(STDERR, "Learnsty App Exception => " . PHP_EOL . " $errstr in [$errfile] on :$errlinen");
        } 
  
-       if(isset($handler) && is_callbale($handler)){
+       if(isset($handler) && is_callable($handler)){
            $handler($errno, $errstr, $errfile, $errline);
        }     
     }
 
-    private function isCLIEnabled(){
-
-       return FALSE;
-    }
-
     private function setErrorHandler($callback){
 
-       $this->errorHandler = $callback;
+       $this->errorHandler = (is_callable($callback)) ? $callback : NULL;
     }
 
     private function getErrorHandler(){
@@ -66,7 +75,7 @@ class System {
 
     private function setBlindRouteCallback($callback){
 
-       $this->blindRouteHandler = $callback;
+       $this->blindRouteHandler = (is_callable($callback)) ? $callback : NULL;
     }
 
     private function getBlindRouteCallback(){
@@ -84,7 +93,7 @@ class System {
        return isset($this->blindRouteHandler);
     }
 
-    public function fireCallback(string $callbackName, array $callbackArgs){
+    public function fireCallback($callbackName, array $callbackArgs){
 
         switch($callbackName){
             case 'BLIND_ROUTE_CALLBACK':
@@ -94,12 +103,12 @@ class System {
 
     }
 
-    public static function fire(){
+    public static function fire($eventName, array $args){
 
 
     }
 
-    public static function on(){
+    public static function on($eventName, callable $eventHandler){
 
 
     }
@@ -127,7 +136,7 @@ class System {
        static::$instance->setErrorHandler($callback);
     }
 
-    public static function middleware(string $middleware_name, callable $callback){
+    public static function middleware($middleware_name, callable $callback){
            
        static::$instance->addMiddlewares($middleware_name,  $callback);           
     }

@@ -12,10 +12,10 @@ class File {
 
     public static function createInstance(){
        
-        if(static::$instance === NULL)
+        if(static::$instance === NULL){
             static::$instance = new File();
-
-        return static::$instance;
+            return static::$instance;
+        }    
     }
 
     public static function read($file_path){

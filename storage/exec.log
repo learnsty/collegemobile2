@@ -1,0 +1,4 @@
+ERROR:2016-10-07 15:46:40 ~ [LearnstyPHP]  Argument 1 passed to Providers\Core\HTTPResolver::draftRouteHandler() must be an instance of Providers\Core\string, string given, called in D:\wamp\www\CollegeMobile\system\base\providers\Core\App.php on line 108 and defined on line 21
+
+ERROR:2016-10-07 15:46:40 ~ [LearnstyPHP]  Argument 1 passed to Providers\Tools\TemplateRunner::render() must be an instance of string, string given, called in D:\wamp\www\CollegeMobile\system\base\components\Response.php on line 78 and defined on line 63
+

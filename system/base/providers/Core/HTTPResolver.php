@@ -1,6 +1,6 @@
 <?php
 
-namespace \Providers\Core;
+namespace Providers\Core;
 
 use \Router;
 
@@ -65,7 +65,6 @@ class HTTPResolver{
                  throw new \Exception("Controller Not Found >> [". $controllerClass . "] ");
             } 
 
-            $GLOBALS['app']->shutDown(); 
      }
 }
 

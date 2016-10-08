@@ -17,20 +17,38 @@
  --------------------------------------------------------*/
 
  System::onAppError(function($code, $message, $file, $line){
-       $devStatus = $GLOBALS['env']['app.status'];
+      
+       $status = $GLOBALS['env']['app.status'];
+
+       $reporter = $GLOBALS['app']->getRemoteErrorReporter();
        
-       Logger::error("LearnstyPHP Error: " . $message);
-       switch ($devStatus) {
-       	case 'dev':
-       	   Response::view('errors/report', array('message' => $message, 'file' => $file, 'line' => $line));
+       Logger::error("[LearnstyPHP]  " . $message . " on line " . $line);
+
+       switch ($status) {
+       	case 'dev': # Development Environment
+       	   Response::view('errors/report', array('err' => $code, 'msg' => $message, 'file' => $file, 'line' => $line));
        	break;
-       	case 'prod':
-               Response::view('errors/report', array());
+       	case 'prod': # Staging/Production Environment
+           if($reporter !== NULL){
+               $headers = array(
+                  'method' => 'GET',
+                  'url' => 'http://appmonitor.collegemobile.net/tracking/errors/', 
+                  'fields' => array(
+                     'browser' => Request::header('HTTP_USER_AGENT'), # optional field
+                     'timing' => Request::header('REQUEST_TIME') # required field
+                   )
+               );
+               $headers['fields']['details'] = json_encode((compact('code', 'message', 'file', 'line'))); # required field
+               $reporter->sendError($headers, function(){
+
+               });
+           }
        	break;
        	default:
        		# code...
        	break;
        }
+    exit(0);   
  });
 
  System::onBlindRoute(function($route){
@@ -42,5 +60,9 @@
 
  });
 
+ /*System::on('readyChatService', function(){
+
+     return NULL;
+ });*/
 
 ?>

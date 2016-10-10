@@ -12,6 +12,7 @@ return array(
 	"\\Providers\\Core\\HTTPResolver" => $compDir . "/providers/Core/HTTPResolver",
      "\\Providers\\Core\\SessionManager" => $compDir . "/providers/Core/SessionManager",
      "\\Providers\\Core\\RequestManager" => $compDir . "/providers/Core/RequestManager",
+     "\\Providers\\Core\\QueryExtender" => $compDir . "/providers/Core/QueryExtender",
      "\\Providers\\Core\\QueryBuilder" => $compDir . "/providers/Core/QueryBuilder",
      
      /* Services */
@@ -29,6 +30,8 @@ return array(
      "\\Providers\\Tools\\ArgvOutput" => $compDir . "/providers/Tools/ArgvOutput",
      "\\Providers\\Tools\\Console" => $compDir . "/providers/Tools/Console",
      "\\Providers\\Tools\\InputFilter" => $compDir . "/providers/Tools/InputFilter",
+     "\\Providers\\Tools\\RedisStorage" => $compDir . "/providers/Tools/RedisStorage",
+     "\\Providers\\Tools\\TCPSocket" => $compDir . "/providers/Tools/TCPSocket",
      "\\Providers\\Tools\\TemplateRunner" => $compDir . "/providers/Tools/TemplateRunner",
         
      /* Policies */

@@ -54,7 +54,7 @@ class Logger {
 
     private function marker($type){
        
-        return strtoupper($type) . ':' . date('Y-m-d H:i:s');
+        return '' . strtoupper($type) . ':' . date('Y-m-d H:i:s');
     }
 
 }

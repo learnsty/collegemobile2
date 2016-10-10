@@ -2,8 +2,8 @@
 
 namespace Providers\Tools;
 
-use Session;
-use Router;
+use \Session;
+use \Router;
 
 class TemplateRunner {
 
@@ -17,7 +17,7 @@ class TemplateRunner {
 
         $this->viewRoot = $GLOBALS['env']['app.path.view'];
 
-        $this->compiledViewRoot = str_replace('/views', '', $this->viewRoot) . '/storage/compiled/';
+        $this->compiledViewRoot = str_replace('/views', '/storage/compiled/', $this->viewRoot);
 
     }
 
@@ -32,7 +32,7 @@ class TemplateRunner {
 
     }
 
-    private function compile(\string $name__){
+    private function compile($name__){
 
     	$view__string;
 
@@ -60,7 +60,7 @@ class TemplateRunner {
 
     }
 
-    public function render(\string $view__name, array $data__array = array()){
+    public function render($view__name, array $data__array = array()){
 
 		
         $__file0 = $this->getCompiledFileName($view__name);
@@ -102,11 +102,13 @@ class TemplateRunner {
 
         $data__array['csrftoken'] = Session::token();
 
+        // $data__array['webhost'] = $GLOBALS['app']->getHost();
+
 		return $this->draw($__file0, $view__name, $data__array);
 
 	}
 
-	private function draw(\string $__file, \string $__name, array $vars){
+	private function draw($__file, $__name, array $vars){
 
 	   // variables created by 'extract()' are not visible in outer or global scope	
        // so this is a safe operation within this function method (__FUNCTION__)

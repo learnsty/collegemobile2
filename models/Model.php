@@ -25,40 +25,36 @@ class Model implements DBInterface {
 
               $this->db->connect($GLOBALS['env']['app.path.base'] . '.env');
 
-              $this->builder = new Builder($this->table, $this->relations);
-
-              $this->builder->setIndex($this->primaryKey);
+              $this->builder = new Builder($this->table, $this->primaryKey, $this->relations, $this->db->getConnection(), $this->db->getParamTypes());
 
           }else{
 
-               throw new Exception("Cannot create Model Instance >> Database Settings Not Found");
+               throw new \Exception("Cannot create Model Instance >> Database Settings Not Found");
                
           }    
      }
 
-     protected function get(array $columns = array('*')){
+     protected function get(array $columns = array(), array $clauseProps = array(), $conjunction = 'and'){
 
-        // $models = new \stdClass();
-
-        $this->builder->select($columns);
+         return $this->builder->select($columns, $clauseProps, $conjunction);
      }
 
-     protected function set(array $columns = array()){
+     protected function set(array $values = array()){
         
-        $this->builder->insert();
+        return $this->builder->insert($values);
      }
 
-     protected function let(array $columns = array()){
+     protected function let(array $columns = array(), $conjunction = 'and'){
 
-        $this->builder->update();
+        return $this->builder->update($columns, $conjunction);
      }
 
      protected function del(array $columns = array()){
 
-        $this->builder->delete();
+        return $this->builder->delete($columns);
      }
 
-     public function findBy($id){
+     public function findById($id){
           
      }
 

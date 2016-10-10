@@ -30,7 +30,7 @@ class Router {
           }     
      }
 
-     private function addToRoutesTable(string $routeUrl, array $settings){
+     private function addToRoutesTable($routeUrl, array $settings){
 
          if(!array_key_exists($routeUrl, $this->routesTable)){
                 $this->routesTable[$routeUrl] = array();
@@ -54,7 +54,7 @@ class Router {
      	  // more code here ---> remove 'NULL' keys and values...
      }
 
-     public static function bind(string $routeUrl, array $settings = array()){
+     public static function bind($routeUrl, array $settings = array()){
 
           if(static::$instance !== NULL){
                
@@ -118,7 +118,7 @@ class Router {
      	 return FALSE;
      }
 
-     public function getRouteSettings(string $requestMethod, System $instance){
+     public function getRouteSettings($requestMethod, System $instance){
 
          $models = array();
          $settingsList = NULL;
@@ -126,6 +126,7 @@ class Router {
          $this->purgeParameters();
  
          if(array_key_exists($this->currentRouteUrl, $this->routesTable)){  
+             Logger::info("Current route was found successfully.... Yeepee!");
      	     $settingsList = $this->routesTable[$this->currentRouteUrl];
      	 }else{
      	     $settingsList = array(array('verb'=>'', 'params'=>array(), 'models'=>array()));	
@@ -164,18 +165,18 @@ class Router {
                  }
              }
 
-         	 if($settings['verb'] !== $requestMethod){
+         	 if(strtolower($settings['verb']) !== $requestMethod){
                  if($i !== ($sLen - 1)){
                     // this route may not be the one we are looking for... so keep checking
                     continue;
                  }else{
                     // we have completed the check (this is the last one) and we still can't find a matching verb
-                    throw new \Exception("Error Processing Request on Route >> [" . $this->currentRouteUrl . "] Route Verb is Undefined");      
+                    throw new \Exception("Error Processing Request on Route >> ['" . $this->currentRouteUrl . "''] Route Verb is Undefined");      
                  }   
          	 }
 
              if(!$instance->executeAllMiddlewares()){
-                 throw new \Execption("ddd  [ " . $instance->getFaultedMiddlewares() . " ] ");
+                 throw new \Execption("ddd  [ " . (implode(', ', $instance->getFaultedMiddlewares())) . " ] ");
              }
 
          	 // validate parameters
@@ -183,7 +184,7 @@ class Router {
          	 $param_value = ($param_key_found)? $this->routeParameters[$param_name] : '';
          	 foreach ($settings['params'] as $param_name => $regex) {
          	 	 if(!preg_match($regex, $param_value)){
-                      throw new \Exception("Invalid Parameter For Current Route >> [". $this->currentRouteUrl . "] ");
+                      throw new \Exception("Invalid Parameter For Current Route >> ['". $this->currentRouteUrl . "''] ");
          	 	 }
          	 }
 
@@ -192,11 +193,12 @@ class Router {
     	            if(class_exists($modelClass)){
     	     	 	    $models[$modelClass] = new $modelClass();
     	            }else{
-    	            	throw new Exception("Model Not Found >> [". $modelClass . "] ");
+    	            	// throw new Exception("Model Not Found >> [". $modelClass . "] ");
+                        $models[$modelClass] = NULL;
     	            }
          	 }
          }   
-           
+         
          return $models;  
      }
 

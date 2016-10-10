@@ -7,16 +7,35 @@ use \Contracts\Policies\SessionAccessInterface as SessionAccessInterface;
 
 class NativeSessionService implements SessionAccessInterface {
 
-    protected $driver;
+    protected $sessionId;
 
-	public function __construct($driver = ''){
+    protected $sessionName;
 
-		if (isset($driver)){
+    protected $sessionCacheExpires;
 
-			$this->driver = $driver;
-		}
+    protected $sessionCookieExpires;
+
+    protected $sessionBag;
+
+    protected $previousReqTime;
+
+    protected $novelReqTime;
+
+	public function __construct(){
+
+		$this->sessionCookieExpires = (time()+246000);
+
+		$this->sessionName = session_name(); // {PHPSESSID}
+
+        $this->sessionCacheExpires = 10800; // max-age = 10800 seconds
+
+        $this->sessionId = '';
 
 		$this->open();
+
+		$this->cacheRequestTime();
+
+		$this->setSessionCookie(); 
 	}
 
 	
@@ -25,15 +44,74 @@ class NativeSessionService implements SessionAccessInterface {
 		$this->close();
 	}
 
+	/**
+	 *
+	 *
+	 * @param string $key
+	 * @return bool 
+	 */
+
 	public function hasKey($key){
 
         return array_key_exists($key, $_SESSION);
 	}
 
-	
-	public function getDriver(){
+	/**
+	 *
+	 *
+	 * @param void
+	 * @return string
+	 */
 
-		return $this->driver;
+	public function getId(){
+
+		return $this->sessionId;
+	}
+
+	/**
+	 *
+	 *
+	 * @param void
+	 * @return void
+	 */
+
+	public function cacheRequestTime(){
+         $reqtime = array_key_exists('REQUEST_TIME', $_SERVER) ? $_SERVER['REQUEST_TIME'] : NULL;
+         if(!isset($reqtime)){
+         	$reqtime = time()-2; // just an estimation... no biggie!
+         }
+         
+         $this->previousReqTime = intval($this->getSessionData('_lastreq'));
+         
+         if($this->previousReqTime === FALSE){
+         	 $this->previousReqTime = 0;
+         }
+         $this->setSessionData('_lastreq', intval($reqtime));
+         $this->novelReqTime = intval($reqtime);
+	}
+
+	public function setSessionCookie(){
+        $params = $GLOBALS['env']['app.settings.cookie'];
+$this->sessionId = (array_key_exists($this->sessionName, $_COOKIE))? $_COOKIE[$this->sessionName] : custom_session_id(TRUE);
+        // regenerate id manually for large diff in request times (This handles browsers which dont support {httpOnly})
+		 if(($this->previousReqTime - $this->novelReqTime) >= 400){ 
+	           $this->sessionId = custom_session_id(TRUE);
+	           session_id($this->sessionId); // manually inform PHP that the session id has been updated/regenrated!!
+         }
+         // overwrite what {session_start()} has done by manually resetting the cookie to enable [LearnstyPHP] settings
+setcookie($this->sessionName, $this->sessionId, $this->sessionCookieExpires, '/', $params['domian_factor'], $params['secure'], $params['server_only']);
+	}
+
+	/**
+     *
+     *
+     * @param void
+     * @return string 
+     */
+	
+	public function getName(){
+
+		return ($this->sessionName || session_name());
 	}
 
 	/**
@@ -42,9 +120,9 @@ class NativeSessionService implements SessionAccessInterface {
 	 * @param  mixed  $value
 	 * @return void
 	 */
-	public function write(string $key, string $value){
+	public function write($key, $value){
 
-		return $this->setSession($key, $value);
+		return $this->setSessionData($key, $value);
 	}
 
 	/**
@@ -53,19 +131,18 @@ class NativeSessionService implements SessionAccessInterface {
 	 * @param string {$key}
 	 * @return mixed
 	 */
-	public function read(string $key){
+	public function read($key){
 
-		return $this->getSession($key);
+		return $this->getSessionData($key);
 	}
 
 	
-	public function destroy(string $key){
+	public function destroy($name){
 
-		if($key !== ''){
+		if($name !== ''){
 
-			 session_destroy();
-
-			 // session_cache_expire();
+             $_SESSION = array(); // remove all session data only
+			 session_destroy(); // remove the entire session cookie only
 
 			 return TRUE;
 		}
@@ -73,14 +150,26 @@ class NativeSessionService implements SessionAccessInterface {
 		return FALSE;
 	}
 
-	public function erase(string $key){
+	public function erase($key){
 
-         return $this->forgetSession($key);		
+         return $this->forgetSessionData($key);		
 	}
 
+	/**
+	 * Starts the session.
+	 *
+	 * @return void
+	 */
+
 	public function open(){
-        // start the session
-		if (session_id() == ''){
+         
+        // We are interfering to protect client user from XSS attack vectors -- via JavaScript document.cookie)
+        $this->sessionBag = array();
+        // lets' get the session ready 
+		if (session_id() == $this->sessionId){
+session_cache_limiter('private_no_expire'); // enable caching of response on the client (disallow on proxies)
+session_cache_expire($this->sessionCacheExpires); // setup Cache-Control to secs value (response meant for single user)
+session_set_cookie_params(0); // tricking PHP actually ;)
 session_start();
 		}
 	}
@@ -95,12 +184,12 @@ session_start();
 		session_write_close();
 	}
 
-	private function setSession($key, $value, $overwrite=TRUE){
+	private function setSessionData($key, $value, $overwrite=TRUE){
 
 		$_SESSION[$key] = serialize($value);
 	}
 
-	private function getSession($key){
+	private function getSessionData($key){
 
 		if ($this->hasKey($key) && isset($_SESSION[$key])){
 
@@ -111,7 +200,7 @@ session_start();
 	}
 
 	
-	private function forgetSession($key){
+	private function forgetSessionData($key){
 
 		if ($this->hasKey($key) && isset($_SESSION[$key])){
 

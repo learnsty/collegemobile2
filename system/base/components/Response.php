@@ -71,7 +71,12 @@ class Response {
 
      }
 
-     public static function view ($name, $data){
+     public static function file($name){
+
+
+     }
+
+     public static function view($name, $data){
 
          static::header('Content-type', 'text/html; charset=UTF-8');
 
@@ -79,12 +84,12 @@ class Response {
 
      } 
 
-     private static function end(string $data, string $from){
+     private static function end($data, $from){
 
            // thou shalt not put this page into a frame for any reason (<iframe>, <frameset>)
            static::header("X-Frame-Options",  "DENY"); # SAMEORIGIN
           
-           $GLOBALS['app']->shutDown(); 
+           // $GLOBALS['app']->shutDown(); 
            
            echo $data;
 
@@ -98,7 +103,7 @@ class Response {
 
      }
 
-     public static function redirect(string $route){
+     public static function redirect($route){
 
            $base = $GLOBALS['env']['app.path.base']; 
 
@@ -110,7 +115,7 @@ class Response {
  
           $config = $GLOBALS['env']['app.settings.cookie'];
 
-          $val = setcookie($key, $value, $config['max_life'], $config['domain_factor'], $config['server_only'], $config['secure']);
+          $val = setcookie($key, $value, (time()+$config['max_life']), '/' ,$config['domain_factor'], $config['secure'],$config['server_only']);
      }
 
 }

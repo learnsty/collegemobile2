@@ -8,11 +8,15 @@ interface SessionAccessInterface {
 
      public function close();
 
-     public function destroy(\string $key);    
+     public function getId();
 
-     public function read(\string $key);
+     public function getName();
 
-     public function write(\string $key, \string $val);
+     public function destroy($name);    
+
+     public function read($key);
+
+     public function write($key, $val);
 
 
 }

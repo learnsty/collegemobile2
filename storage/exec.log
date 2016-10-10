@@ -2,3 +2,9 @@ ERROR:2016-10-07 15:46:40 ~ [LearnstyPHP]  Argument 1 passed to Providers\Core\H
 
 ERROR:2016-10-07 15:46:40 ~ [LearnstyPHP]  Argument 1 passed to Providers\Tools\TemplateRunner::render() must be an instance of string, string given, called in D:\wamp\www\CollegeMobile\system\base\components\Response.php on line 78 and defined on line 63
 
+INFO:2016-10-10 12:14:49 ~ Current route was found successfully.... Yeepee!
+
+ERROR:2016-10-10 12:14:49 ~ [LearnstyPHP]  Missing argument 1 for System::executeAllMiddlewares(), called in D:\wamp\www\CollegeMobile\system\base\components\Router.php on line 178 and defined on line 125
+
+ERROR:2016-10-10 12:14:50 ~ [LearnstyPHP]  Call to undefined function get_random() on line 88
+

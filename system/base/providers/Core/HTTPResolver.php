@@ -3,6 +3,7 @@
 namespace Providers\Core;
 
 use \Router;
+use \System;
 
 class HTTPResolver{
 
@@ -18,7 +19,7 @@ class HTTPResolver{
 
 	 }
 
-	 public function draftRouteHandler(string $uri, string $method){
+	 public function draftRouteHandler($uri, $method){
 
 	 	  $this->resolverUri = $uri;
 
@@ -48,21 +49,23 @@ class HTTPResolver{
                 if($sys->hasBlindRouteCallback()){
                    $sys->fireCallback('BLIND_ROUTE_CALLBACK', array(implode('/', $uriParts)));
                 }else{
-                   throw new \Exception("Route Not Found >> [" . implode('/', $uriParts) . "] ");
+                   throw new \Exception("Route Not Found >> ['" . implode('/', $uriParts) . "''] ");
                 }
             }
 
             $models = $router->getRouteSettings($method, $sys);
+
+            $GLOBALS['app']->cachModelInstances($model);
             
             $controllerClass = (array_key_exists(0, $uriParts))? ucfirst($uriParts[0]) : 'Controller';
             $controllerMethod = (array_key_exists(1, $uriParts) || index_of($uriParts[1], '@') != 0)? $uriParts[1] : 'index';
 
             if(class_exists($controllerClass)){
                  $this->currentController = new $controllerClass($router->getCurrentRouteParameters());
-                 // TODO: we could do dependency injection to controller methods...
+                 // TODO: Later, we could do dependency injection to controller methods here...
                  $this->currentController->{$controllerMethod}($models);
             }else{
-                 throw new \Exception("Controller Not Found >> [". $controllerClass . "] ");
+                 throw new \Exception("Controller Not Found >> ['". $controllerClass . "''] ");
             } 
 
      }

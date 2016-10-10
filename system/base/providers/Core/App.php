@@ -111,6 +111,11 @@ class App {
 
      }
 
+     public function cacheModelInstances($models){
+
+
+     }
+
      public function exposeEnvironment($root){
 
          return $this->envservice->exposeEnvironment($root);

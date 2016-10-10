@@ -18,11 +18,13 @@
 
     return array (
 
-        "app_environment" => "dev", #options:("dev", "prod", "stage")
+        "app_environment" => "dev", #options: ("dev", "prod")
 
-        "session_driver" => "native",  #options:("native", "db", "redis")
+        "session_driver" => "native",  #options: ("native", "redis")
+
+        "custom_session_cookie_name" => "_collegemobile", # any alpha-numeric combination of chars
         
-        "encryption_scheme" => "mcrypt", #options:("mcrypt", "bcrypt")
+        "encryption_scheme" => "mcrypt", #options: ("mcrypt", "bcrypt")
 
         "app_paths" => array (
 
@@ -40,32 +42,34 @@
 
         "app_auth" => array (
  
-             
+            'auth_model' => 'User'            
         ),
 
         "app_cookies" => array(
              
-            'secure' => false,
+            'secure' => false, # {HTTP / HTTPS}
 
-            'server_only' => true,
+            'server_only' => true, # {httpOnly} flag 
 
             'domain_factor' => '.collegemobile.net',
 
-            'max_life' =>  24000
+            'max_life' =>  246000
         ),
 
         "app_uploads" => array(
 
              'temp_upload_dir'=> NULL,
 
-             'uploads_enabled'=> true,
+             'uploads_enabled'=> true, #options: (false, true)
 
-             'can_extract_zip'=> true,
+             'upload_target' => '#local', #option: ('#s3', '#cloudinary', '#local')
+
+             'can_extract_zip'=> true, #options: (false, true)
 
              'max_upload_size'=> 100000 /* 10MB */
         ),
 
-        "app_mails_transfer" => array(
+        "app_mails" => array(
 
               'protocol' => "SMTP",
               
@@ -76,7 +80,14 @@
               'password' => "********"
         ),
 
-        "image_processing_enabled" => false #options:(true, false)
+        "app_connections" => array(
+
+            "raw_tcp_sockets_enabled" => false, #options: (false, true)
+
+            "disallow_ajax" => false #options: (false, true)
+        ),
+
+        "image_processing_enabled" => false #options: (true, false)
     );
 
 ?>

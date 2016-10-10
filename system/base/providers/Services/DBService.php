@@ -94,6 +94,7 @@ class DBService {
 
     public function disconnect(){
 
+        // disconnect PDO connection
     }
 
     public function getConnection(){

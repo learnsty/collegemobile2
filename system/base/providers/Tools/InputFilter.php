@@ -2,7 +2,7 @@
 
 namespace Providers\Tools;
 
-class InputFilter{
+class InputFilter {
 
 	 /**
 	  *

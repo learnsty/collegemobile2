@@ -35,7 +35,8 @@
                   'url' => 'http://appmonitor.collegemobile.net/tracking/errors/', 
                   'fields' => array(
                      'browser' => Request::header('HTTP_USER_AGENT'), # optional field
-                     'timing' => Request::header('REQUEST_TIME') # required field
+                     'timing' => Request::header('REQUEST_TIME'), # required field,
+                     'session' => Session::id()
                    )
                );
                $headers['fields']['details'] = json_encode((compact('code', 'message', 'file', 'line'))); # required field
@@ -63,6 +64,28 @@
  /*System::on('readyChatService', function(){
 
      return NULL;
- });*/
+ });
+
+ System::on('newUserRegistered', function(){
+
+     return NULL;
+ });
+
+ System::on('userCreatedClassroom', function(){
+
+     return NULL;
+ });
+
+ System::on('userEnteredClassroom', function(){
+
+     return NULL;
+ });
+
+ System::on('userLeftClassroom', function(){
+
+     return NULL;
+ });
+
+ */
 
 ?>

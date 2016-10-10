@@ -88,7 +88,7 @@
    /*!------------------------------------------------------
     ! 
     ! Start piecing together the controller action from the 
-    ! activated route
+    ! current activated route
     !
     !
     !

@@ -18,16 +18,16 @@ class Auth {
      
      }
 
-     public static function create(Model $user, array $props){
+     public static function create(Model $user, array $props = array()){
            
-           $user->set(array_keys($props), $props);
+           $user->set(array_keys($props), $props)->exec();
      }
 
-     public static function verify(array $props){
+     public static function login(array $props){
 
      }
 
-     private static function validateToken(){
+     private static function validateJSONToken(){
 
      }
 

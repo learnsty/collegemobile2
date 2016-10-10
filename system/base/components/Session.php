@@ -1,6 +1,7 @@
 <?php 
 
-use \Providers\Services\NativeSessionService as SessionService;
+use \Providers\Services\NativeSessionService as NativeService;
+use \Providers\Services\RedisSessionService as RedisService;
 
 class Session {
 
@@ -9,9 +10,31 @@ class Session {
      private  $session_service;
  
      private function __construct($driver){
-      
-         $this->session_service = new SessionService($driver);      
+
+        // @TODO: use {SessioManager} class in the next code update to do the below more efficiently...
+
+        if($driver === 'native'){
+
+             $this->session_service = new NativeService();  
+
+        }else if($driver === 'redis'){
+
+             $this->session_service = new RedisService();
+        }
      }
+
+    /**
+     *
+     *
+     * @param void
+     * @return string 
+     */
+    
+    public function getDriver(){
+
+        return $this->session_service;
+    }
+
 
      public static function createInstance($driver){
 
@@ -38,7 +61,19 @@ class Session {
 
      public static function drop(){
 
-         return static::$instance->session_service->destroy(session_id());
+         return static::$instance->session_service->destroy(static::$instance->session_service->getName());
+     }
+
+     public static function id(){
+
+        return static::$instance->session_service->getId();
+     }
+
+     public static function hasDropped(){
+
+         $name = static::$instance->session_service->getName();
+
+         return (!array_key_exists($name, $_COOKIE));
      }
 
      public static function token(){

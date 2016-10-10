@@ -154,7 +154,7 @@ class Request {
          return static::getInfo('HTTP_HOST');
      }
 
-     public static function upload(string $file_upload_folder, &$errors){
+     public static function upload($file_upload_folder, &$errors){
 
          $manager = static::$instance->getInputManager();
 
@@ -164,7 +164,7 @@ class Request {
 
      }
 
-     public static function download(string $file_download_path){
+     public static function download($file_download_path){
 
         # code...
      }
@@ -210,9 +210,11 @@ class Request {
      }
 
      public static function getCookie($key){
+
           if(static::hasCookie($key)){
                return $_COOKIE[$key];
           }
+          
           return NULL;
      }
 

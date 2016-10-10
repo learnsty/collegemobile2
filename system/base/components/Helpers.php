@@ -114,7 +114,7 @@ class Helpers {
             return $plain_str;
        }
        
-       public static function delay(string $input, string $secret_key) {
+       public static function delay($input, $secret_key) {
               $hash = crc32(serialize($secret_key . $input . $secret_key));
               // make it take a maximum of 0.1 milliseconds
               time_nanosleep(0, abs($hash % 100000));
@@ -250,7 +250,7 @@ class Helpers {
             
        }
        
-       public static function validateJWTObject(array $jwt_arr,  string $hash_key){ 
+       public static function validateJWTObject(array $jwt_arr, $hash_key){ 
               // pick both $jwt_arr and $h_key from the redis server
               $jwt_plain = static::decodeJWTObject($jwt_arr); 
               $head = $jwt_plain['header'];

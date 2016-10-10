@@ -4,9 +4,9 @@ namespace Contracts\Policies;
 
 interface CacheAccessInterface {
 
-    public function set(\string $key, \string $val);
+    public function set($key, $val);
 
-    public function get(\string $key);
+    public function get($key);
 
 }
 

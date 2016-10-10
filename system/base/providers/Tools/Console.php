@@ -16,7 +16,7 @@ class Console {
 
        $this->input = new ArgvInput();
 
-       $this->output = new ArgvOutput;
+       $this->output = new ArgvOutput();
 
    }
 

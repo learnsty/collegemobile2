@@ -8,6 +8,7 @@
 
 # skip base files/folders
 
+/_temp
 /hooks
 /packages
 /documentation

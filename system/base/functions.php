@@ -207,12 +207,19 @@ if(! function_exists('get_file_name') ){
     }
 }
 
+if(! function_exists('custom_session_id') ){
+    function custom_session_id($native = FALSE){
+         return substr(generate_uniq_string(), 1, ($native? 31 : 23));  
+    }
+}    
+
 if(! function_exists('is_binary_file') ){
-    function is_binary_file($file){
+    function is_binary_file($file, $asString=FALSE){
         $out = array();
-        if(index_of($_SERVER['SERVER_OS'], "Linux") > -1){
+        if(index_of($_SERVER['SERVER_SOFTWARE'], "Linux") > -1
+          || index_of($_SERVER['SERVER_SOFTWARE'], "Unix") > -1){
            exec("file -bi" . $file, $out);
-              return index_of($out[0], "charset=binary") > -1;
+            return $asString? $out[0] : index_of($out[0], "charset=binary") > -1;
         }
     }
 }
@@ -234,6 +241,12 @@ if(! function_exists('reduce_boolean')){
 if(! function_exists('get_random_from_string') ){
     function get_random_from_string($str){
        return generate_uniq_string($str);
+    }
+}
+
+if(! function_exists('update_in_keys')){
+    function update_in_keys($key){
+        return "$key = ?";
     }
 }
 
@@ -374,15 +387,11 @@ if(! function_exists('is_file_in_dir') ){
  
  */
 
-/*
+
 if(! function_exists('db_get') ){ ## SQL SELECT
-    function db_get($query = "", $params = array(), $rows_limit = NULL, $resultset_cols_filter = array()){
-	
-          global $dbo;
-          global $http_data;
-		  global $param_types;
+    function db_get($pdo, $param_types, $query = "", $params = array(), $rows_limit = NULL, $resultset_cols_filter = array()){
 		  
-		  if(strlen($query) == 0 || !is_array($params) || !is_object($dbo)){
+		  if(strlen($query) == 0 || !is_array($params) || !is_object($pdo)){
 		      return NULL;
 		  }
 		  
@@ -402,7 +411,7 @@ if(! function_exists('db_get') ){ ## SQL SELECT
 		  $param_count = 0;
 		  $set_array = array();
 		  $set_filter = array();
-          $stmt = $dbo->prepare($query);
+          $stmt = $pdo->prepare($query);
 		  foreach($params as $type => $param){ // params filter by rows (obviously !?)
 		     $stmt->bindParam(++$param_count, ("int" != $type? $param : intval($param)), $param_types[$type]);
 		  }
@@ -435,22 +444,19 @@ if(! function_exists('db_get') ){ ## SQL SELECT
 			}else{
 			        return NULL;
 			}	
-          }catch(PDOException $pdo){
-                  write_to_file($pdo->getMessage(), get_storage_path() . 'db_errors.logf', false);
+          }catch(\Exception $e){
+                  throw $e;
           }
-	}
+	   }
 }
 
 if(! function_exists('db_put') ){ ## SQL INSERT
-    function db_put($query = "", $params = array(), $commit = FALSE, $transact = TRUE){
-	
-	      global $dbo;
-          global $http_data;
-		  global $param_types;
+    function db_put($pdo, $param_types, $query = "", $params = array(), $commit = FALSE, $transact = TRUE){
 		  
-		  if(strlen($query) == 0 || !is_array($params) || !is_object($dbo)){
+		  if(strlen($query) == 0 || !is_array($params) || !is_object($pdo)){
 		      return NULL;
 		  }
+
 		  $query = trim($query); 
 		  
 		  if(!starts_with($query, "INSERT", TRUE)){
@@ -465,45 +471,41 @@ if(! function_exists('db_put') ){ ## SQL INSERT
 		  
 		       $param_count = 0;
 		       $set_array = array();
-               $stmt = $dbo->prepare($query);
+               $stmt = $pdo->prepare($query);
 		       foreach($params as $type => $param){
 		           $stmt->bindParam(++$param_count, ("int" != $type? $param : intval($param)), $param_types[$type]);
 		       }
 	   
               if($transact)
-                 $dbo->beginTransaction();
+                 $pdo->beginTransaction();
  
               if($stmt->execute()){
                    
 				   if($commit)
-				       $dbo->commit();
+				       $pdo->commit();
 				
                  if(starts_with($query, "INSERT"))				
-				   return $dbo->lastInsertId();
+				             return $pdo->lastInsertId();
 	             else
-				   return 0;
+				             return 0;
 				   
 	          }else{
-			      write_to_file("Could not execute query to database. Please check query again for errors!", get_storage_path() . 'db_errors.logf', false);
-                  $dbo->rollBack();
-                           
-				  return NULL;						   
+             
+                  $pdo->rollBack();
+                  return NULL;						   
               } 		
          
-          }catch(PDOException $pdo){
-                 write_to_file($pdo->getMessage(), get_storage_path() . 'db_errors.logf', false);   
+          }catch(\Exception $e){
+                 throw $e;
           } 
     }
 }
 
 if(! function_exists('db_post') ){  ## SQL UPDATE
-    function db_post($query = "", $params = array(), $commit = FALSE, $transact = TRUE){
+    function db_post($pdo ,$param_types, $query = "", $params = array(), $commit = FALSE, $transact = TRUE){
 	
-	      global $dbo;
-          global $http_data;
-		  global $param_types;
 		  
-		  if(strlen($query) == 0 || !is_array($params) || !is_object($dbo)){
+		  if(strlen($query) == 0 || !is_array($params) || !is_object($pdo)){
 		      return NULL;
 		  }
 		  $query = trim($query); 
@@ -514,13 +516,11 @@ if(! function_exists('db_post') ){  ## SQL UPDATE
 	}
 }	
 
-if(! function_exists('db_delete') ){ ## SQL DELETE
-    function db_delete($query, $params = array(), $commit = FALSE){
-	      global $dbo;
-          global $http_data;
-		  global $param_types;
+if(! function_exists('db_del') ){ ## SQL DELETE
+    function db_del($pdo ,$param_types, $query = "", $params = array(), $commit = FALSE){
+	     
 		  
-		  if(strlen($query) == 0 || !is_array($params) || !is_object($dbo)){
+		  if(strlen($query) == 0 || !is_array($params) || !is_object($pdo)){
 		      return NULL;
 		  }
 		  $query = trim($query); 
@@ -536,6 +536,6 @@ if(! function_exists('db_copy') ){ ## SQL INSERT/SELECT
 	
 	}
 }	
-*/
+
 
 ?>

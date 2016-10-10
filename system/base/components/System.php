@@ -8,6 +8,8 @@ class System {
 
     private $blindRouteHandler;
 
+    private $faultedMiddlewares;
+
     private $middlewares;
 
    
@@ -19,6 +21,8 @@ class System {
 
         $this->blindRouteHandler = NULL;
         
+        $this->faultedMiddlewares = array();
+
         // Plain Text message instead of HTML messages.. Thank you!
         ini_set('html_errors', '0');
         // Tell PHP to use the CLI error handler
@@ -115,7 +119,7 @@ class System {
 
     public function getFaultedMiddlewares(){
 
-
+       return $this->faultedMiddlewares;
     }
 
     public function executeAllMiddlewares($route){
@@ -127,6 +131,11 @@ class System {
              }else{
                 throw new \Exception("Error Processing Request >> Middleware Callback Undefined");
              }
+             try{
+                if($result[current($this->middlewares)] === FALSE){
+                     $this->faultedMiddlewares[] = $name;
+                }
+             }catch(Exception $e){}
            }
            return (bool) array_reduce($result, 'reduce_boolean');
     }

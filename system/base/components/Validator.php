@@ -39,7 +39,7 @@ class Validator{
         return static::$errors;
     }
 
-    public static function checkAndSanitize($data, $fieldRules){ // $data should be the data from $_POST super global always...
+    public static function checkAndSanitize(array $data, array $fieldRules){ // $data should be the data from $_POST super global always...
          $valid = TRUE;
          $results = array();
          $fieldvalue = '';
@@ -176,7 +176,7 @@ class Validator{
 
 
 
-/*
+/* EXAMPLE OF VALIDATION RULES FORMAT
 
 $fieldRules = array(
            'email' => "email|required",

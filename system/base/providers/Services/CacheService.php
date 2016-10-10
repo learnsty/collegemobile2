@@ -18,12 +18,12 @@ class CacheService implements CacheAccessInterface {
       	 // $this->isCacheAvialable = $this->memcache->connect(MEMCACHED_HOST, MEMCACHED_PORT);
       }
 
-      public function set(\string $key, \string $val){
+      public function set($key, $val){
 
           // $this->memcache->set($key, $val);
       }
 
-      public function get(\string $key){
+      public function get($key){
 
           // return $this->memcache-get($key); 
       }

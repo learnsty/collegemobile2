@@ -11,7 +11,7 @@ class RequestManager {
         IMAGETYPE_GIF,
         IMAGETYPE_JPEG,
         IMAGETYPE_PNG
-    
+      
      );
 
      protected $textFilesAllowed = array(
@@ -57,12 +57,30 @@ class RequestManager {
                 if (array_key_exists($name, $this->httpInput['files'])){
                     $file = $this->httpInput['files'];
                     $errors[$name] = array();
-                    if(defined('UPLOAD_ERR_OK') && 
-                       $file['error'] !== UPLOAD_ERR_OK){
+                    
+                    if($file['error'] !== UPLOAD_ERR_OK){
                        $errors[$name]['upload_error'] = 'file seems to have a problem';
                        $results[$name] = NULL;
                        continue;
                     }
+
+                    if($file['error'] == UPLOAD_ERR_INI_SIZE 
+                      || $file['error'] == UPLOAD_ERR_FORM_SIZE){
+                        $errors[$name]['upload_error'] = 'file too big to upload';
+                        $results[$name] = NULL;
+                        continue;
+                    }
+
+                    if($file['error'] == UPLOAD_ERR_NO_FILE){
+                        $errors[$name]['upload_error'] = 'no file to upload';
+                        $results[$name] = NULL;
+                        continue;
+                    }
+
+                    // $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+                    // $finfo->file($file['tmp_name']);
+
                     // validate  file size
                     $size = $file['size'];
                     if($size >= $this->maxUploadSize){
@@ -184,7 +202,7 @@ class RequestManager {
                 $filtered = $parameters;
             }
             
-            return $filtered;
+            return (count($filtered) > 0)? $filtered : NULL;
      }
 
 }

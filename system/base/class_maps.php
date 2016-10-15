@@ -51,7 +51,9 @@ return array(
      "\\Validator" => $compDir . "/components/Validator",
      "\\Response" => $compDir . "/components/Response",
      "\\Logger" => $compDir . "/components/Logger",
+     "\\Mail" => $compDir . "/components/Mail",
      "\\Cache" => $compDir . "/components/Cache",
+     "\\TextStream" => $compDir . "/components/TextStream",
      "\\Helpers" => $compDir . "/components/Helpers",
 
      /* Models */
@@ -65,6 +67,8 @@ return array(
      "\\Controller" => $compDir . "/../../controllers/Controller",
      "\\Login" => $compDir . "/../../controllers/Login",
      "\\Register" => $compDir . "/../../controllers/Register",
+     "\\Logout" => $compDir . "/../../controllers/Logout",
+     "\\Activity" => $compDir . "/../controllers/Activity",
      "\\Scorm" => $compDir . "/../../controllers/Scorm",
      "\\Learn" => $compDir . "/../../controllers/Learn",
      "\\Teach" => $compDir . "/../../controllers/Teach"

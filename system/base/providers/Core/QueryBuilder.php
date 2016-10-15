@@ -17,22 +17,19 @@ use Providers\Core\QueryExtender;
 
 class QueryBuilder {
 
-	private static $modelInstances = NULL;
-
     protected $extender;
 
-    protected $schemaAtrribs;
+    protected $schemaAttribs;
 
-	public function __construct($table, $key, array $relations, $connection, $paramTypes){
+	public function __construct($connection, $paramTypes){
 
-       $this->schemaAttribs = compact('table', 'key');
+       $this->extender = new QueryExtender($connection, $paramTypes);
 
-       $this->extender = new QueryExtender($this->schemaAttribs, $relations, $connection, $paramTypes);
+	}
 
-       // $this->extender->bindModels(static::$modelInstances);
+	public function setAttributes(array $attribs){
 
-       // QueryBuilder::bindModels($models);
-
+        $this->extender->setAttributes($attribs);
 	}
 
 	public function select(array $columns, array $clauseProps, $conjunction){
@@ -55,9 +52,5 @@ class QueryBuilder {
        return $this->extender->del($columns);
 	}
 
-	public static function bindModels(array $models){
- 
-        static::$modelInstances = $models;
-	}
 	
 }

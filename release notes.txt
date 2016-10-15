@@ -15,8 +15,9 @@ SIDE NOTE
 
 CHANGE LOG (8) - v1.0.0-beta
  - Changed views file from '.php' to '.view' and included logic for 'compilation'
- - Completed sepration of concerns for controllers and models and views
+ - Completed strict sepration of concerns for controllers and models and views
  - Made configs much more robust for ease of code development
+ - Made Session cookie hidden from client (browser) to prevent possible XSS attacks
  - Included '.log' file to write logs for easy debugging
  - Removed 'url' query parameter from '.htaccess' rewrite path
  - Included command-line options for varying tasks e.g. Model File Creation, COntroller File Creation, e.t.c
@@ -40,11 +41,14 @@ CAVEATS (0)
 
 
 FINAL UPDATES FOR THIS VERSION (v1.0.0-beta) - timeline early 2017
- - Include support for events on 'System' component class
- - Complete code for reporting errors to central app monitor dashboard
+ - Implement 'Mail' component class to make use of mailing service code
+ - Implement 'Auth' component class fully to support User Permissions, JWT and User Login Throttling
+ - Complete 'Learnsty\ErrorReporter\Reporter' code for reporting errors to central app monitor dashboard
  - Hot fixes for known bugs
 
 COMING UPDATES FOR NEXT VERSION (v1.0.1-beta) - [patch 1] - timeline mid 2017
+ - Implement Encryption for all cookies (session cookie inclusive) and other mission-critical data
+ - Implement Raw TCP socket system for easy socket programming 
  - Complete route definition command from command-line
  - Final fixes for known bugs
    

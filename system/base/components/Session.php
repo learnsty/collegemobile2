@@ -20,6 +20,9 @@ class Session {
         }else if($driver === 'redis'){
 
              $this->session_service = new RedisService();
+        }else{
+
+            ; // Come... e be like say something dey worri you. Comm'n set {$driver} properly joor!
         }
      }
 
@@ -42,6 +45,11 @@ class Session {
                static::$instance = new Session($driver);
                return static::$instance;
           }     
+     }
+
+     public static function has($key){
+
+        return static::$instance->session_service->hasKey($key);
      }
 
      public static function get($key){
@@ -82,12 +90,12 @@ class Session {
        
         if(static::$instance->session_service->hasKey('_token')){
            
-            $_token =  static::read('_token');
+            $_token =  static::$instance->session_service->read('_token');
         }else{
 
-            $_token = get_random(TRUE);
+            $_token = get_random_as_range(TRUE);
 
-            static::write('_token',  $token);
+            static::$instance->session_service->write('_token',  $_token);
         }
 
         return $_token;

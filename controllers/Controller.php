@@ -10,17 +10,17 @@ class Controller {
              
     }
 
-    public function index($models){
+    protected function index($models){
 
         Response::view('site/index', array());	
     } 
 
-    public function feeds($models){
+    protected function feeds($models){
         
         // Prep Code
     }
 
-    public function profile($models){
+    protected function profile($models){
 
     	// Prep Code
     }

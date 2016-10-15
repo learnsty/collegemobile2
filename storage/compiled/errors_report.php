@@ -14,13 +14,13 @@
    </style>
 </head>
 <body class="error-card">
-   <h1 style="font-size:120%;" class="error-title">Error: <span>=@err</span></h1>
+   <h1 style="font-size:120%;" class="error-title">Error: <span><?php echo $err; ?></span></h1>
    <div class="error-details">
    <p style="font-size:96%;">
-      =@msg
+      <?php echo $msg; ?>
    </p>
    <em style="font-family:Arial;">
-      on =@line in <a href="=@file">=@file</a>
+      on <?php echo $line; ?> in <a href="<?php echo $file; ?>"><?php echo $file; ?></a>
    </em>
    </div>
 </body>

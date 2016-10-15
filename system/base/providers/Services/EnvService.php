@@ -4,7 +4,7 @@ namespace Providers\Services;
 
 class EnvService {
 
-	    protected $config; 
+	      protected $config; 
 
         protected $appPaths;
 
@@ -20,7 +20,7 @@ class EnvService {
 
               $this->setAppRawSockets();
 			  
-			  $this->setAppMail();
+			        $this->setAppMail();
 
         }
 
@@ -42,10 +42,10 @@ class EnvService {
            }
         }
 		
-		private function setAppMail(){
-		
-		    $mail_settings = $this->config['app_mails'];
-		}
+    		private function setAppMail(){
+    		
+    		    $mail_settings = $this->config['app_mails'];
+    		}
 
         private function setupAppEnvironment (){
 
@@ -84,8 +84,8 @@ class EnvService {
 
       
         public function exposeEnvironment($root){
-
-             $arr = array(
+           
+           $arr = array(
                   /* paths */
                   'app.path.base'=>$this->appPaths->base,
                   'app.path.upload'=>$this->appPaths->storage . '/cabinet/uploads/',
@@ -96,8 +96,9 @@ class EnvService {
 
                   /* app specifics */
                   'app.root'=> $root,
-                  'app.custom.sessionname'=>'',
-                  'app.status' =>$this->config['app_environment'],
+                  'app.key'=> '',
+                  'app.custom.sessionname' => '',
+                  'app.status' => $this->config['app_environment'],
                   'app.settings.cookie'=>$this->config['app_cookies'],
                   'app.uploadtarget'=>$this->config['app_uploads']['upload_target'],
                   'app.extractuploadedzip'=>$this->config['app_uploads']['can_extract_zip'], #default: TRUE

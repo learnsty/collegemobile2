@@ -22,6 +22,10 @@
 
         "session_driver" => "native",  #options: ("native", "redis")
 
+        "cache_driver" => "memcached", #options: ("memcached", "apc")
+
+        "mail_driver" => "", #options: ()
+
         "custom_session_cookie_name" => "_collegemobile", # any alpha-numeric combination of chars
         
         "encryption_scheme" => "mcrypt", #options: ("mcrypt", "bcrypt")

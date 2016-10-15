@@ -3,6 +3,7 @@
 namespace Providers\Services;
 
 use \PDO;
+use \Providers\Core\QueryBuilder as Builder;
 
 class DBService {
 
@@ -10,6 +11,8 @@ class DBService {
 	protected $connectionHandle = NULL;
 
 	protected $connectionString = '';
+
+  protected $builders;
 
 	protected $param_types = array(
 		"int" => PDO::PARAM_INT,
@@ -38,10 +41,13 @@ class DBService {
               
           }
 
+          $this->builders = array();
+
     }
 
     public  function __destruct(){ # this will be used to disconnect from DB automatically
 
+          // $this->disconnect();
     }
 
     public function __clone(){
@@ -49,7 +55,20 @@ class DBService {
 
     }
 
-    public function getParamTypes(){
+    public function setModelsToBuilder(&$models){
+
+        foreach($models as $model){ 
+
+             $builder = new Builder($this->getConnection(), $this->getParamTypes());
+
+             $builder->setAttributes($model->getAttributes());
+
+             $model->setBuilder($builder);
+
+        }
+    }
+
+    private function getParamTypes(){
 
     	return $this->param_types;
     }
@@ -80,8 +99,8 @@ class DBService {
             $this->connectionHandle = new PDO($this->connectionString, $engine['username'], $engine['password'], $engine['settings']);
 
               #$this->connectionHandle->setAttribute(PDO::FETCH_CLASS);
-              $this->connectionHandle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-              $this->connectionHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+              #$this->connectionHandle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+              #$this->connectionHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
               $this->config['engines']['mysql'] = $engine;
 
@@ -92,12 +111,12 @@ class DBService {
          }
     } 
 
-    public function disconnect(){
+    private function disconnect(){
 
         // disconnect PDO connection
     }
 
-    public function getConnection(){
+    private function getConnection(){
 
        return $this->connectionHandle;
     }

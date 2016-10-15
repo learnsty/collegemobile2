@@ -11,7 +11,6 @@ class System {
     private $faultedMiddlewares;
 
     private $middlewares;
-
    
     private function __construct(){
  
@@ -22,6 +21,8 @@ class System {
         $this->blindRouteHandler = NULL;
         
         $this->faultedMiddlewares = array();
+
+        $this->customEventHandlers = array();
 
         // Plain Text message instead of HTML messages.. Thank you!
         ini_set('html_errors', '0');
@@ -48,7 +49,7 @@ class System {
    
     public function shutdown(){
          $fatalError = error_get_last();
-         if($fatalError != NULL){
+         if($fatalError !== NULL){
              $this->error_handler($fatalError['type'], $fatalError['message'], $fatalError['file'], $fatalError['line']);
          }
     }
@@ -98,28 +99,46 @@ class System {
     }
 
     public function fireCallback($callbackName, array $callbackArgs){
-
+        
+        $result = NULL;
         switch($callbackName){
             case 'BLIND_ROUTE_CALLBACK':
-               $this->blindRouteHandler($callbackArgs[0]);
+               $result = $this->blindRouteHandler($callbackArgs[0]);
+            break;
+            case 'FILTERED_ROUTE_CALLABACK':
+               $result = FALSE;
+            break;
+            default:
+                if(array_key_exists($callbackName, $this->customEventHandlers)){
+                     $callback = $this->customEventHandlers[$callbackName];
+                     if(is_callable($callback)){
+                         $result = call_user_func_array($callback, $callbackArgs);
+                     }
+                }
             break;
         }
 
+        return $result;
     }
 
     public static function fire($eventName, array $args){
 
-
+        return static::$instance->fireCallback($eventName, $args);
     }
 
     public static function on($eventName, callable $eventHandler){
 
-
+        static::$instance->setCustomEvent($eventName, $eventHandler);
     }
 
     public function getFaultedMiddlewares(){
 
        return $this->faultedMiddlewares;
+    }
+
+    public function setCustomEvent($name, $function){
+
+        $this->customEventHandlers[$name] = $function;
     }
 
     public function executeAllMiddlewares($route){
@@ -132,17 +151,19 @@ class System {
                 throw new \Exception("Error Processing Request >> Middleware Callback Undefined");
              }
              try{
-                if($result[current($this->middlewares)] === FALSE){
+                $index = ((count($result)) - 1);
+                if($result[$index] === FALSE){
                      $this->faultedMiddlewares[] = $name;
                 }
-             }catch(Exception $e){}
+             }catch(\Exception $e){}
            }
-           return (bool) array_reduce($result, 'reduce_boolean');
+
+           return (bool) array_reduce($result, 'reduce_boolean', TRUE);
     }
 
     public static function onAppError(callable $callback){
       
-       static::$instance->setErrorHandler($callback);
+        static::$instance->setErrorHandler($callback);
     }
 
     public static function middleware($middleware_name, callable $callback){

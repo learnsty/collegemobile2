@@ -8,15 +8,18 @@ class Cache {
 
    private $cache_service;
 
-   private function __construct(){
+   private function __construct($driver){
 
-       $this->cache_service = new CacheService();
+       if($driver === "memcached"){  
+
+            $this->cache_service = new CacheService();
+       }
    }
 
-   public static function createInstance(){
+   public static function createInstance($driver){
 
        if(static::$instance == NULL){
-             static::$instance = new Cache();
+             static::$instance = new Cache($driver);
              return static::$instance;
         }
    }

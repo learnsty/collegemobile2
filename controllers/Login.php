@@ -12,7 +12,7 @@ class Login extends Controller {
 
         // @Override 
 
-        public function index($models){
+        protected function index($models){
 
             Logger::info('Hello There! from ' . get_class($this) . '::index method.');
 

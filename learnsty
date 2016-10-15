@@ -144,17 +144,17 @@
 			
 			 fwrite(STDOUT, $prompt);
 
-			 $in .= fgets(STDIN);
+			 $in = fgets(STDIN);
 
-			 fflush(STDIN);
+			 //fflush(STDIN);
 
-			 $stdinLines[] = $prompt . $in;
+			 $stdinLines[] = trim($prompt) . $in;
 
 		}
 
-		$stdinLines[] = 'env_key=37hays63ha7agd737uagde737ba'; // encryption key
+		$stdinLines[] = 'app_key=' . str_replace('.', '', Helpers::generateCode()); // encryption key
 
-        write_to_file(implode('', $stdinLines), '.env');
+        write_to_file((implode('', $stdinLines)), '.env');
 
         fwrite(STDOUT, PHP_EOL . "All Done. " . PHP_EOL);	
 	}
@@ -173,7 +173,7 @@
 
 			 write_to_file("<?php \n\n class " . ucfirst($token) . " extends Model { \n\n\t protected $table = 'fill this in'; \n\n\t protected $primaryKey = 'fill this in'; \n\n\t protected $relations = array(); \n\n\t\t public function __construct(){ \n\n\t\t parent::__construct(); \n\n\t\t }  \n\n\t } \n\n ?>", $in);
 
-			 $marker = '     "\\Model" => $compDir . "/../../models/Model",' . PHP_EOL;
+			 $marker = '     "\\\\Model" => $compDir . "/../../models/Model",' . PHP_EOL;
 
 			 $class_map_arr = file($class_maps_path . '/class_maps.php'); // FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
 
@@ -201,9 +201,9 @@
 
         	sleep(1);
 
-        	write_to_file("<?php \n\n class " . ucfirst($token) ." extends Controller { \n\n\t protected $params; \n\n\t\t public function __construct($params){ \n\n\t\t\t parent::__construct($params); \n\n\t\t }  \n\n\t } \n\n\t protected function index($model){  \n\n\t\t # code... \n\n\t } \n\n ?>", $in);
+        	write_to_file("<?php \n\n class " . ucfirst($token) ." extends Controller { \n\n\t protected $params; \n\n\t\t public function __construct($params){ \n\n\t\t\t parent::__construct($params); \n\n\t\t } \n\n\t protected function index($models){  \n\n\t\t # code... \n\n\t } \n\n ?>", $in);
 
-        	$marker = '     "\\Controller" => $compDir . "/../../controllers/Controller",' . PHP_EOL;
+        	$marker = '     "\\\\Controller" => $compDir . "/../../controllers/Controller",' . PHP_EOL;
 
             $class_map_arr = file($class_maps_path . 'class_maps.php'); // FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
 

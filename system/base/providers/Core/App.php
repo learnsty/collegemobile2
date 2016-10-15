@@ -17,12 +17,16 @@ use File;
 use Response;
 use Validator;
 use Logger;
+use TextStream;
+use Mail;
 
 class App {
 
      private $apphost;
 
      private $os;
+
+     protected $hasCachedModels;
 
      protected $resolver;
 
@@ -40,6 +44,8 @@ class App {
         }     
 
         $this->instances = array();
+
+        $this->hasCachedModels = FALSE;
 
         $this->apphost = "http://" . Request::getHost();
 
@@ -98,21 +104,28 @@ class App {
      	return $this->apphost;
      }
 
-     public function getDBService(){ 
+     public function setDBConnection($env_path){ 
 
-        return $this->dbservice;
+         $this->dbservice->connect($env_path);
      }
 
      public function initHTTPResolver(){
 
-     	 $this->resolver->draftRouteHandler(strtolower(Router::currentRoute()), strtolower(Request::method()));
+     	 $this->resolver->draftRouteHandler(strtolower(Request::method()));
 
      	 $this->resolver->handleCurrentRoute($this->getInstance('Router'), $this->getInstance('System'));
 
      }
 
-     public function cacheModelInstances($models){
+     public function cacheModelInstances(array $models){
+ 
+        if($this->hasCachedModels === FALSE){ 
 
+            $this->dbservice->setModelsToBuilder($models);
+
+            $this->hasCachedModels = TRUE;
+
+        }    
 
      }
 
@@ -133,19 +146,21 @@ class App {
 
      public function registerAllComponents(){
 
-         // TODO: later, try to see if you can do the below in a loop! will be much cleaner code
+         // TODO: later, try to see if you can do the below in a loop! it probably will be a much cleaner code
          if(!$this->inCLIMode()){  
-         	   $this->instances['System'] = System::createInstance();
+               $this->instances['Logger'] = Logger::createInstance();
+               $this->instances['System'] = System::createInstance();
                $this->instances['Session'] = Session::createInstance($this->envservice->getConfig('session_driver'));
                $this->instances['Response'] = Response::createInstance();
          	   $this->instances['Request'] = Request::createInstance();
-               $this->instances['Cache'] = Cache::createInstance();
+               $this->instances['Cache'] = Cache::createInstance($this->envservice->getConfig('cache_driver'));
                $this->instances['Router'] = Router::createInstance();
                $this->instances['Validator'] = Validator::createInstance();
          	   $this->instances['File'] = File::createInstance();
-         	   $this->instances['Logger'] = Logger::createInstance();
          	   $this->instances['Auth'] = Auth::createInstance();
                $this->instances['Helpers'] = Helpers::createInstance();
+               $this->instances['Mail'] = Mail::createInstance($this->envservice->getConfig('mail_driver'));
+               $this->instances['TextStream'] = TextStream::createInstance();
          }  
      }
 
@@ -157,6 +172,16 @@ class App {
      public function shutDown(){
 
      	 Logger::info("Application is Shutting Down...");
+
+         $this->hasCachedModels = FALSE;
+
+         $this->dbservice = NULL; // call __destruct to disconnect DB connection (PDO style) & recover memory
+
+         $this->envservice = NULL; // call __desstruct to ...
+
+         // $this->resolver = NULL;
+
+         $this->instances = array(); // recover more memory
 
      }
 

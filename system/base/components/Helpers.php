@@ -179,6 +179,13 @@ class Helpers {
             // They are only identical strings if $result is exactly 0...
             return $result === 0;
        }
+
+       public static function verifyHmac($algos, $data, $secret, $hash){
+
+              $__hash = hash_hmac($algos, $data, $secret);
+
+              return static::timingSafeCompare($hash, $__hash);
+       }
        
        public static function encodeJWTObject(array $item){
        
@@ -259,7 +266,7 @@ class Helpers {
               $time = time();
               $message = ($jwt_arr['header'].".".$jwt_arr['payload']);
               // prevents timing attacks
-              if(static::timingSafeCompare($signature, hash_hmac('sha256', $message, $hash_key)) /* && $time <= $pload['exp'] */){
+              if(static::verifyHmac('sha256', $message, $hash_key, $signature) /* && $time <= $pload['exp'] */){
                   return $pload;
               }else{
                   return NULL;
@@ -286,7 +293,7 @@ class Helpers {
             return $token_bits;
        }
 
-       public static function generateLockCode($prefix = ""){
+       public static function generateCode($prefix = ""){
 
             return uniqid($prefix, true);
        }

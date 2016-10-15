@@ -3,15 +3,14 @@
 use \Contracts\Policies\DBAccessInterface as DBInterface;
 use \Providers\Core\QueryBuilder as Builder;
 
+
 class Model implements DBInterface {
 
-     protected $db;
+     protected $table = 'NULL';
 
-     protected $builder;
+     protected $primaryKey = 'NULL';
 
-     protected $table = '';
-
-     protected $primaryKey = '';
+     protected $builder = NULL;
 
      protected $relations = array(
 
@@ -19,19 +18,20 @@ class Model implements DBInterface {
 
      public function __construct(){
 
-          $this->db = $GLOBALS['app']->getDBService();
-
           if(file_exists($GLOBALS['env']['app.path.base'] . '.env')){
 
-              $this->db->connect($GLOBALS['env']['app.path.base'] . '.env');
-
-              $this->builder = new Builder($this->table, $this->primaryKey, $this->relations, $this->db->getConnection(), $this->db->getParamTypes());
+              $app->setDBConnection($GLOBALS['env']['app.path.base'] . '.env');
 
           }else{
 
                throw new \Exception("Cannot create Model Instance >> Database Settings Not Found");
                
           }    
+     }
+
+     protected function setBuilder(Builder $builder){
+ 
+          $this->builder = $builder;
      }
 
      protected function get(array $columns = array(), array $clauseProps = array(), $conjunction = 'and'){
@@ -52,6 +52,11 @@ class Model implements DBInterface {
      protected function del(array $columns = array()){
 
         return $this->builder->delete($columns);
+     }
+
+     public function getAttributes(){
+
+         return array('table' => $this->table, 'key' => $this->primaryKey, 'relations' => $this->relations);
      }
 
      public function findById($id){

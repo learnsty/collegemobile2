@@ -4,12 +4,11 @@ namespace Providers\Core;
 
 use \Router;
 use \System;
+use \Request;
 
 class HTTPResolver{
 
 	 protected $currentController;
-
-	 private $resolverUri;
 
 	 private  $resolverMethod;
 
@@ -17,19 +16,21 @@ class HTTPResolver{
 
 	 	 $this->currentController = NULL;
 
+         $this->resolverMethod = '';
+
 	 }
 
-	 public function draftRouteHandler($uri, $method){
-
-	 	  $this->resolverUri = $uri;
+	 public function draftRouteHandler($method){
 
 	 	  $this->resolverMethod = $method;
 	
  	 }
 
- 	 public function getResolverURI(){
+ 	 private function getResolverURIParts($url){
 
- 	 	 return explode('/', preg_replace('/^\/|\/$/', '', $this->resolverUri));
+         $pathname = preg_replace('/^\/|\/$/', '', $url);
+
+ 	 	 return (explode('/', $pathname));
 
  	 }
 
@@ -41,31 +42,37 @@ class HTTPResolver{
 
      public function handleCurrentRoute(Router $router, System $sys){
             
-            $uriParts = $this->getResolverURI();
-            $method = $this->getResolverMethod();
+            $uri = Request::uri();
 
-
-            if(!$router->findRoute()){
+            if(!$router->findRoute($uri)){
                 if($sys->hasBlindRouteCallback()){
-                   $sys->fireCallback('BLIND_ROUTE_CALLBACK', array(implode('/', $uriParts)));
+                   $sys->fireCallback('BLIND_ROUTE_CALLBACK', $uri);
                 }else{
-                   throw new \Exception("Route Not Found >> ['" . implode('/', $uriParts) . "''] ");
+                   throw new \Exception("Route Not Found >> ['" . $uri . "'] ");
                 }
             }
 
+            $method = $this->getResolverMethod();
+            $uriParts = $this->getResolverURIParts($router->getCurrentRouteUrl());
+
             $models = $router->getRouteSettings($method, $sys);
 
-            $GLOBALS['app']->cachModelInstances($model);
+            $GLOBALS['app']->cacheModelInstances($models);
             
-            $controllerClass = (array_key_exists(0, $uriParts))? ucfirst($uriParts[0]) : 'Controller';
-            $controllerMethod = (array_key_exists(1, $uriParts) || index_of($uriParts[1], '@') != 0)? $uriParts[1] : 'index';
+            $controllerClass = '\\' . (array_key_exists(0, $uriParts)? ucfirst($uriParts[0]) : 'Controller');
+            $controllerMethod = (array_key_exists(1, $uriParts) && index_of($uriParts[1], '@') != 0)? $uriParts[1] : 'index';
+
+            \Logger::info($controllerClass . "  " . $controllerMethod);
 
             if(class_exists($controllerClass)){
                  $this->currentController = new $controllerClass($router->getCurrentRouteParameters());
+                 $meth = preg_replace('/\-/', '_', $controllerMethod);
                  // TODO: Later, we could do dependency injection to controller methods here...
-                 $this->currentController->{$controllerMethod}($models);
+                 if(method_exists($this->currentController, $meth)){
+                     $this->currentController->{$meth}($models);
+                 }
             }else{
-                 throw new \Exception("Controller Not Found >> ['". $controllerClass . "''] ");
+                 throw new \Exception("Controller Not Found >> ['". $controllerClass . "'] ");
             } 
 
      }

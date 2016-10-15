@@ -38,7 +38,7 @@
     /*!------------------------------------------------------
     ! 
     ! Load up our routes file so we know what the client-side
-    ! is asking for any reply accordingly
+    ! is asking for and reply accordingly
     !
     !
     !
@@ -100,7 +100,7 @@
     ! *
     ! *
     --------------------------------------------------------*/
-	$app->initHTTPResolver();
+    $app->initHTTPResolver();
 
    /*!------------------------------------------------------
     ! 

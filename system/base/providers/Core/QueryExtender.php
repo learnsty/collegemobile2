@@ -16,13 +16,9 @@ class QueryExtender {
 
      protected $connection;
 
-     public function __construct(array $schemaAttribs, array $relations, $connection, $paramTypes){
+     public function __construct($connection, $paramTypes){
 
          $this->queryString = '';
-
-         $this->attribs = $schemaAttribs;
-
-         $this->relations = $relations;
 
          $this->paramValues = NULL;
 
@@ -56,7 +52,7 @@ class QueryExtender {
 
      public function del($columns){
 
-     	$this->queryString .= "DELETE " . $this->attribs['table'];
+     	$this->queryString .= "DELETE " . $columns . " FROM " . $this->attribs['table'];
 
         return $this;
      }
@@ -65,17 +61,22 @@ class QueryExtender {
 
          $jointype = strtoupper($jointype);
 
-     	 $this->queryString .= " $jointype JOIN";
+     	 $this->queryString .= " $jointype JOIN ON ";
 
      	 return $this;
      }
 
      public function orderby($column){
 
-     	 $this->queryString .= " ORDER BY $column";
+     	 $this->queryString .= " ORDER BY $column ";
 
      	 return $this;
 
+     }
+
+     public function setAttributes($schemaAttribs){
+
+     	 $this->attribs = $schemaAttribs;
      }
 
      public function distinct(){

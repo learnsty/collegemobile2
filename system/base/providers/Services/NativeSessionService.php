@@ -166,7 +166,8 @@ setcookie($this->sessionName, $this->sessionId, $this->sessionCookieExpires, '/'
         // We are interfering to protect client user from XSS attack vectors -- via JavaScript document.cookie)
         $this->sessionBag = array();
         // lets' get the session ready 
-		if (session_id() == $this->sessionId){
+        \Logger::info(" Neeeelly: " . ($this->sessionId == session_id()));
+        if (session_id() == $this->sessionId){
 session_cache_limiter('private_no_expire'); // enable caching of response on the client (disallow on proxies)
 session_cache_expire($this->sessionCacheExpires); // setup Cache-Control to secs value (response meant for single user)
 session_set_cookie_params(0); // tricking PHP actually ;)
@@ -181,7 +182,7 @@ session_start();
 	 */
 	public function close(){
 		
-		session_write_close();
+		 session_write_close();
 	}
 
 	private function setSessionData($key, $value, $overwrite=TRUE){

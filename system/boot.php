@@ -21,8 +21,8 @@
 
     /*!------------------------------------------------------
     ! 
-    ! Instantiate the class loader and register all class via
-    ! their corresponding class paths
+    ! Instantiate the class loader and register all classes
+    ! via their corresponding class paths
     !
     !
     !
@@ -43,7 +43,7 @@
 
     /*!--------------------------------------------------------
     ! 
-    ! Otherwise, if something goes wrong, kill the process... 
+    ! Otherwise, if something goes awry, kill the process... 
     ! ^Naija Style^ 
     !
     !
@@ -57,8 +57,9 @@
     ----------------------------------------------------------*/
 
 	else { 
-        die('ClassLoader processing failed');
-        exit(1);
+	
+        die('ClassLoader processing failed - LearnstyPHP terminated abruptly');
+		
     }    
-
+	
 ?>

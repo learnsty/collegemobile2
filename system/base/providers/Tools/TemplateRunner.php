@@ -7,15 +7,15 @@ use \Router;
 
 class TemplateRunner {
 
-    private $viewRoot = NULL;	
+    private $viewRoot;	
 
-    private $compiledViewRoot = NULL;
+    private $compiledViewRoot;
 
     private $compileFileName = NULL;
 
     public function __construct(){
 
-        $this->viewRoot = $GLOBALS['env']['app.path.view'];
+        $this->viewRoot = $GLOBALS['env']['app.path.views'];
 
         $this->compiledViewRoot = str_replace('/views', '/storage/compiled/', $this->viewRoot);
 
@@ -41,12 +41,13 @@ class TemplateRunner {
 		      throw new \Exception("No View File For Compilation");	
 		}
 		try{ 
+       $view__path = ($this->viewRoot . (starts_with($name__, '/')? substr($name__, 1) : $name__) . '.view');
 
-		   $view__string  = file_get_contents($this->viewRoot . (index_of($name__, '/') > -1? substr($name__, 1) : $name__) . '.view');
+		   $view__string  = file_get_contents($view__path);
 
 		}catch(\Exception $e){
 
-		     throw new \Exception("View File Not Found >> [" . $name__ . "] Compilation Not Successful");
+		     throw new \Exception("View File Not Found >> ['" . $name__ . "'] Compilation Not Successful");
 
 		}
 
@@ -102,7 +103,9 @@ class TemplateRunner {
 
         $data__array['csrftoken'] = Session::token();
 
-        // $data__array['webhost'] = $GLOBALS['app']->getHost();
+        $data__array['webhost'] = $GLOBALS['app']->getHost();
+
+        // $data__array[''] = ;
 
 		return $this->draw($__file0, $view__name, $data__array);
 
@@ -110,7 +113,7 @@ class TemplateRunner {
 
 	private function draw($__file, $__name, array $vars){
 
-	   // variables created by 'extract()' are not visible in outer or global scope	
+	     // variables created by 'extract()' are not visible in outer or global scope	
        // so this is a safe operation within this function method (__FUNCTION__)
 	   extract($vars); 
 
@@ -124,28 +127,6 @@ class TemplateRunner {
 		   throw new \Exception("Error in View File >> [" . $__name . "] => " . $e->getMesage());
 
  	   }
-
-        /*if('<=PHP5'){
-            $read = file_get_contents('viewsey.php', true);
-       /* }else{
-            $read = file_get_contents('viewsey.php', FILE_USE_INCLUDE_PATH);
-        } */
-
-        /*
-           // Create a stream
-            $opts = array(
-              'http'=>array(
-                'method'=>"GET",
-                'header'=>"Accept-language: en\r\n" .
-                          "Cookie: foo=bar\r\n"
-              )
-            );
-
-            $context = stream_context_create($opts);
-
-            // Open the file using the HTTP headers set above
-            $file = file_get_contents('http://www.example.com/', false, $context);
-        */
 
         $___drawn =  ob_get_contents();  
 

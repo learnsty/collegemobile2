@@ -1,8 +1,9 @@
 <?php
 /**
+ * LearnstyPHP (c) 2016
  * {functions.php}
  */
- 
+  
   
 if(! function_exists('char_at') ){
     function char_at($str, $num){
@@ -18,6 +19,12 @@ if(! function_exists('char_at') ){
 	}
 }
 
+if(! function_exists('getallheaders')){
+   function getallheaders(){
+       return array();
+   }
+} 
+
 // Fix for overflowing signed 32 bit integers,
 // works for sizes up to 2^32-1 bytes (4 GiB - 1):
 if(! function_exists('fix_integer_overflow')){
@@ -31,13 +38,13 @@ if(! function_exists('fix_integer_overflow')){
   
 if(! function_exists('index_of') ){
     function index_of($str, $seed, $radix  = -1){
+	      $mixed = FALSE;
 	      if($radix == -1){
-               return strpos($str, $seed);
+             $mixed = strpos($str, $seed);
 	      }else if($radix > -1){
-	           return strpos($str, $seed, $radix);
-	      }else{
-	          return -1;
+	         $mixed = strpos($str, $seed, $radix);
 	      }
+		  return (gettype($mixed) === 'integer')? $mixed : -1;
 	}
 }
 
@@ -70,6 +77,53 @@ if(! function_exists('index_of_any') ){
     function index_of_any($str, $seed, $arr){
 
     }
+}
+
+if(! function_exists('http_response_code') ){
+   function http_response_code($code = NULL){
+         $text = '';
+         if($code === NULL){
+             return $text;
+         }
+         switch(intval($code)){
+               case 100:
+                  $text = 'Continue';
+               break;
+               case 101:
+                  $text = 'Switching Protocols';
+               break;
+               case 200:
+                  $text = 'OK';
+               break;
+               case 201:
+                  $text = 'Created';
+               break;
+               case 202:
+                  $text = 'Accepted';
+               break;
+               case 203:
+                  $text = 'Non-Authoritative Information';
+               break;
+               case 204:
+                  $text = 'No Content';
+               break;
+               case 205:
+                  $text = 'Reset Content';
+               break;
+               case 206:
+                  $text = 'Partial Content';
+               break;
+               case 401:
+                  $text = 'Unauthorized';
+               break;
+               default:
+                  return $text;
+               break;                      
+         }
+
+         $proto = (isset($_SERVER['SERVER_PROTOCOL'])? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+         header($proto . ' ' . $code . ' ' . $text);
+   }
 }
 
 if(! function_exists('last_index_of') ){
@@ -233,8 +287,9 @@ if(! function_exists('delete_file') ){
 }
 
 if(! function_exists('reduce_boolean')){
-    function reduce_boolean($a, $b){
-      return $a && $b;
+    function reduce_boolean($accum, $item){
+      $accum &= $item;
+      return $accum;
     }
 }
 
@@ -290,7 +345,7 @@ if(! function_exists('delete_text_from_file') ){
     }
 }
 
-if(! function_exists('get_random') ){
+if(! function_exists('get_random_as_range') ){
     function get_random_as_range($useText=FALSE, $len=10, $range=10){
         $text = array();
         for($i=0;$i < $len; $i++){

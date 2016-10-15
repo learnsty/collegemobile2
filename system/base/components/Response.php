@@ -1,6 +1,7 @@
 <?php
 
 use \Providers\Tools\TemplateRunner as Runner;
+use \Request;
 
 class Response {
 
@@ -22,13 +23,10 @@ class Response {
      }
 
      public static function createInstance(){
-
-
          if(static::$instance == NULL){
                static::$instance = new Response();
                return static::$instance;
          }    
-         
      }
 
      public static function header($key, $value){
@@ -45,19 +43,39 @@ class Response {
        return '';
      }
 
-     public static function text(){
+     public static function text($data, $statusCode){
+
+        if(index_of(Request::header('HTTP_ACCEPT'), 'text/event-stream') > -1){
+
+              static::header('Content-type', 'text/event-stream');
+
+              static::header('Cache-Control', 'no-cache');
+
+              $data .= PHP_EOL;
+        }else{
       
+             static::header('Content-type', 'text/plain; charste=UTF-8');
+        }  
+
+          http_response_code(intval($statusCode));
+
+          static::end($data, 'text');
      }
 
-     public static function json(array $data){
+     public static function json(array $data, $statusCode){
 
           static::header('Vary', 'Accept');
           
-          if(index_of(static::getInfo('HTTP_ACCEPT'), 'application/json') > -1){
+          if(index_of(Request::header('HTTP_ACCEPT'), 'application/json') > -1){
+
               static::header('Content-type', 'application/json; charset=UTF-8');
+
           }else{
+
               static::header('Content-type', 'text/plain; charste=UTF-8');
           }    
+
+          http_response_code(intval($statusCode));
 
           static::end(json_encode($data), 'text');
         
@@ -65,13 +83,13 @@ class Response {
 
      public static function error(\Exception $e){
 
-          static::header('Content-type', 'text/plain');
+          static::header('Content-type', 'text/plain; charset=UTF-8');
 
           static::end($e->getMessage(), 'text');
 
      }
 
-     public static function file($name){
+     public static function file($filename){
 
 
      }
@@ -86,17 +104,15 @@ class Response {
 
      private static function end($data, $from){
 
-           // thou shalt not put this page into a frame for any reason (<iframe>, <frameset>)
-           static::header("X-Frame-Options",  "DENY"); # SAMEORIGIN
-          
-           // $GLOBALS['app']->shutDown(); 
-           
-           echo $data;
+            $GLOBALS['app']->shutDown();
+                     
+            echo $data; 
 
             if($from === 'text'){
-                 ob_end_flush(); 
-            }elseif ($from === 'view') {
-                 ob_end_clean();
+                 ob_flush(); 
+                 flush();
+            }elseif ($from === 'view'){
+                 ; // ob_end_flush(); // ob_end_clean();
             }     
 
           // ob_implicit_flush(TRUE);

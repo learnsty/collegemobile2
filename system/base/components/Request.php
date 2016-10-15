@@ -12,9 +12,14 @@ class Request {
 
      private $inputManger;
 
+     private $headers;
+
      private $accepted_formats = array(
           'application/json' => 'json',
+          'application/xhtml+xml' => 'xml',
+          'application/xml' => 'xml',
           'application/x-www-form-urlencoded' => 'html',
+          'text/html' => 'html',
           'text/plain' => 'text',
           'multipart/form-data' => 'multipart'
      );
@@ -23,16 +28,21 @@ class Request {
 
      private $base_dir = '';
 
-     protected $parameters = array();
+     protected $parameters;
 
      private function __construct(){
 
+           $this->headers = getallheaders();
+
            $this->setRequestFormat();
 
-           $this->parseRequestInput();
+           $this->inputManger = NULL;
 
-           $this->inputManger = new Manager($this->getParameters());
+           $this->parameters = NULL;
 
+           $this->method = static::getInfo('REQUEST_METHOD');
+
+           $this->base_dir = static::getInfo('DOCUMENT_ROOT');
      }
 
      public static function createInstance(){
@@ -46,7 +56,17 @@ class Request {
      public static function header($key){
          
          return static::getInfo($key);
-                
+     }
+
+     public static function rawHeader($key){
+
+         $headers = static::$instance->headers;
+
+         if(array_key_exists($key, $headers)){
+             return $headers[$key];
+         }
+
+         return NULL;
      }
 
      private static function getInfo($var){
@@ -58,6 +78,10 @@ class Request {
 
      public function getInputManager(){
 
+        if($this->inputManger === NULL){
+            $this->inputManger = new Manager($this->getParameters());
+        }
+
         return $this->inputManger;
      }
 
@@ -68,14 +92,15 @@ class Request {
 
      }
 
-     private function parseRequestInput(){
+     private function parseRequestInput($headerKeys){
           $sliced;
+
+          $this->parameters = array();
           $this->url_elements = explode('/', static::getInfo('PATH_INFO'));
-          $this->method = static::getInfo('REQUEST_METHOD');
-          $this->base_dir = static::getInfo('DOCUMENT_ROOT');
+        
           $qs = static::getInfo('QUERY_STRING');
         
-
+          \Logger::info(" PIPO " . $this->method);
           switch($this->method){
                case "JSONP":
                case "GET": 
@@ -90,9 +115,9 @@ class Request {
                case "PUT":
                    $body = file_get_contents("php://input");
                    if(isset($body)){
-                       switch ($this->format) {
+                       switch ($this->format){
                           case 'json':
-                              $body_params = json_decode($body);
+                              $body_params = json_decode($body, TRUE);
                               if(isset($body_params)){
                                   foreach ($body_params as $param_name => $param_value) {
                                       $this->parameters[$param_name] = trim(strip_tags($param_value));
@@ -100,7 +125,7 @@ class Request {
                               }
                           break;
                           case 'text':
-                              $this->parameters['null'] = "";
+                              $this->parameters['nothing'] = "";
                           break;
                           case 'html':
                               parse_str($body, $postvars);
@@ -109,7 +134,7 @@ class Request {
                               }
                           break;
                           default:
-                             
+                             $this->parameters['nothing'] = "";
                           break;
                        }
                    }else if(count($_POST) > 0){
@@ -117,6 +142,11 @@ class Request {
                        array_merge($sliced, $this->parameters);
                    }    
                break;
+          }
+          if($headerKeys !== NULL){ 
+              foreach ($headerKeys as $hkey) {
+                  $this->parameters[$hkey] = (array_key_exists($hkey, $this->headers)? $this->headers[$hkey] : '');  
+              }  
           }  
      }
 
@@ -138,9 +168,14 @@ class Request {
          return $this->parameters;
      } 
 
+     private function getMethod(){
+
+         return $this->method;
+     }
+
      public static function method(){
 
-          return static::$instance->method;
+          return static::$instance->getMethod();
 
      }
 
@@ -176,9 +211,13 @@ class Request {
            return NULL;     
      }
 
-     public static function input(){
-           
-          return static::$instance->getInputManager();     
+     public static function input($headerKeys = NULL){
+
+         if(is_null(static::$instance->getParameters())){ 
+              static::$instance->parseRequestInput($headerKeys);
+         }
+ 
+         return static::$instance->getInputManager();     
      }
 
      public static function ip(){

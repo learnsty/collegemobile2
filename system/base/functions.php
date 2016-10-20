@@ -1,6 +1,8 @@
 <?php
-/**
- * LearnstyPHP (c) 2016
+
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
  * {functions.php}
  */
   
@@ -60,6 +62,21 @@ if(! function_exists('ignorecase_index_of') ){
 	}
 }
 
+if(! function_exists('array_pluck')){  
+    function array_pluck($array, $index){
+       $return = array();
+       foreach ($array as $key => $value) {
+           if(is_array($value)){
+               if((count($array) - 1) <= $index){
+                  $return[$key] = $value[$index];
+               }else{
+                  $return[$key] = $value;
+               }
+           }
+       }
+       return $return;
+    }
+}
   
 if(! function_exists('str_compare_to') ){ 
     function str_compare_to($str1, $str2){
@@ -82,8 +99,9 @@ if(! function_exists('index_of_any') ){
 if(! function_exists('http_response_code') ){
    function http_response_code($code = NULL){
          $text = '';
-         if($code === NULL){
-             return $text;
+         $GLOBALS['HTTP_CODE'] = 200; # default
+         if($code === NULL || (gettype($code) != "integer")){
+             $code = 0;
          }
          switch(intval($code)){
                case 100:
@@ -113,16 +131,169 @@ if(! function_exists('http_response_code') ){
                case 206:
                   $text = 'Partial Content';
                break;
+               case 207:
+                  $text = 'Multi-Status';          // RFC4918
+               break;  
+               case 208:
+                  $text = 'Already Reported'; // RFC5842
+               break;         
+               case 226:
+                  $text = 'IM Used';               // RFC3229
+               break;   
+               case 300:
+                  $text = 'Multiple Choices';
+               break;   
+               case 301:
+                  $text = 'Moved Permanently';
+               break;   
+               case 302:
+                  $text = 'Found';
+               break;   
+               case 303:
+                  $text = 'See Other';
+               break;   
+               case 304:
+                  $text = 'Not Modified';
+               break;   
+               case 305:
+                  $text = 'Use Proxy';
+               break;   
+               case 306:
+                  $text = 'Reserved';
+               break;   
+               case 307:
+                  $text = 'Temporary Redirect';
+               break;   
+               case 308:
+                  $text = 'Permanent Redirect';    // RFC7238
+               break;  
+               case 400: 
+                  $text = 'Bad Request';
+               break;
                case 401:
                   $text = 'Unauthorized';
+               break;  
+               case 402:
+                  $text = 'Payment Required';
+               break;   
+               case 403:
+                  $text = 'Forbidden';
+               break;   
+               case 404: 
+                  $text = 'Not Found';
+               break;
+               case 405: 
+                  $text = 'Method Not Allowed';
+               break; 
+               case 406: 
+                  $text = 'Not Acceptable';
+               break;
+               case 407: 
+                  $text = 'Proxy Authentication Required';
+               break;
+               case 408: 
+                  $text = 'Request Timeout';
+               break;
+               case 409: 
+                  $text = 'Conflict';
+               break;
+               case 410:
+                  $text = 'Gone';
+               break;
+               case 411: 
+                  $text = 'Length Required';
+               break; 
+               case 412: 
+                  $text = 'Precondition Failed';
+               break;   
+               case 413: 
+                  $text = 'Request Entity Too Large';
+               break;
+               case 414: 
+                  $text = 'Request-URI Too Long';
+               break;
+               case 415: 
+                  $text = 'Unsupported Media Type';
+               break;
+               case 416: 
+                  $text = 'Requested Range Not Satisfiable';
+               break;   
+               case 417:
+                  $text = 'Expectation Failed';
+               break;
+               case 418:
+                  $text = 'I\'m a teapot';                                 // RFC2324
+               break;
+               case 422: 
+                  $text = 'Unprocessable Entity';                                  // RFC4918
+               break;
+               case 423:
+                  $text = 'Locked';                            // RFC4918
+               break;   
+               case 424:
+                  $text = 'Failed Dependency';                        // RFC4918
+               break;   
+               case 425:
+                  $text = 'Reserved for WebDAV advanced collections expired proposal';      // RFC2817
+               break;   
+               case 426:
+                  $text = 'Upgrade Required';                            // RFC2817
+               break;   
+               case 428:
+                  $text = 'Precondition Required';                       // RFC6585
+               break;   
+               case 429:
+                  $text = 'Too Many Requests';                           // RFC6585
+               break;   
+               case 431: 
+                  $text = 'Request Header Fields Too Large';             // RFC6585
+               break;   
+               case 500: 
+                  $text = 'Internal Server Error';
+               break;
+               case 501: 
+                  $text = 'Not Implemented';
+               break;
+               case 502: 
+                  $text = 'Bad Gateway';
+               break;   
+               case 503: 
+                  $text = 'Service Unavailable';
+               break;   
+               case 504: 
+                  $text = 'Gateway Timeout';  
+               break;   
+               case 505: 
+                  $text = 'HTTP Version Not Supported';
+               break;   
+               case 506: 
+                  $text = 'Variant Also Negotiates (Experimental)';              // RFC2295
+               break;   
+               case 507: 
+                  $text = 'Insufficient Storage';                // RFC4918
+               break;   
+               case 508: 
+                  $text = 'Loop Detected';              // RFC5842
+               break;
+               case 510: 
+                  $text = 'Not Extended';               // RFC2774
+               break;
+               case 511:
+                  $text = 'Network Authentication Required';
                break;
                default:
-                  return $text;
+                  $text = 'Unknown';
                break;                      
          }
 
          $proto = (isset($_SERVER['SERVER_PROTOCOL'])? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-         header($proto . ' ' . $code . ' ' . $text);
+
+         if($code != 0 && $text != 'Unknown'){
+              $GLOBAL['HTTP_CODE'] = $code;
+              header($proto . ' ' . $code . ' ' . $text, true, $code);
+         }else{
+              return $GLOBAL['HTTP_CODE'];
+         }     
    }
 }
 
@@ -299,9 +470,12 @@ if(! function_exists('get_random_from_string') ){
     }
 }
 
-if(! function_exists('update_in_keys')){
-    function update_in_keys($key){
-        return "$key = ?";
+if(! function_exists('update_placeholder')){
+    function update_placeholder($value, $key){
+        if(!is_array($value)){
+            return "$key = ?"; 
+        }
+        return "$key " . $value[0] . " ?";
     }
 }
 

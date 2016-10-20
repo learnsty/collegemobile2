@@ -12,11 +12,9 @@ class Login extends Controller {
 
         // @Override 
 
-        protected function index($models){
+        public function index($models){
 
             Logger::info('Hello There! from ' . get_class($this) . '::index method.');
-
-             // Auth::verifyJWT(Request::getCookie('_marker__stat_002')); --> [move this to system middleware later]
 
              // $models['User']->set(array('id'=>'355252', 'url'=>'hhhhhhh')); // SQL INSERT
 
@@ -29,17 +27,48 @@ class Login extends Controller {
 
         public function authenticate($models){
 
-             $uploadErrors = array('status' => 'E get as e be oo!');
+             $uploadErrors = array('write_error' => 'E get as e be oo!');
+
+             $ua_fingerprint = $this->params['fingerprint'];
+
+             $redirect = '/';
+
+             $json = array();
+
+             Logger::info('Hello There! from ' . get_class($this) . '::authenticate method.');
             
+             $fields_list = Request::input()->getFields();
+
+             # validation [fields] ...
+
+             if(array_key_exists('return_to', $fields_list)){ // client reads querystring and puts it in POST vars
+                 $url = $fields_list['return_to'];
+                 unset($fields_list['return_to']);
+             }
+
+             Auth::setThrottleId($ua_fingerprint);
+
+             $loggedIn = Auth::logUser($models['User'], $models['UserRole'], $models['UserThrottle'], $fields_list);
+
+
              /*$file_list1 = Request::input()->uploadFiles(array('courseware_file'=>'courseware'), $uploadErrors);*/
 
-             $field_list1 = Request::input()->getFields();
+             /*$file_list2 = Request::upload('display_photos', $uploadErrors);*/              
 
-             /*$file_list2 = Request::upload('display_photos', $uploadErrors);*/
+             if($loggedIn){
+                 if(Auth::willBeReturnedToURL($url)){
+                     $redirect = Auth::getReturnToURL();
+                 }else{
+                     $redirect = $redirect . ""; /* user role here */
+                 }   
+                 $json['status'] = 'ok';  
+                 $json['redirect'] = $redirect;
+             }else{
+                 $json['status'] = 'error';
+                 $json['errors']= $uploadErrors;
+             }
 
-             Logger::info('Hello There! from ' . get_class($this) . '::register method.');
-
-             Response::json(array('ok'=> FALSE, 'errors'=> $uploadErrors));
+             return Response::json($json);
 
         }
 }

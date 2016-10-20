@@ -1,4 +1,9 @@
 <?php
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
+ * {DBService.php}
+ */
 
 namespace Providers\Services;
 
@@ -73,13 +78,13 @@ class DBService {
     	return $this->param_types;
     }
 
-    public function connect($base_path_env){
+    public function connect($env_file){
 
     	 $engines = $this->config['engines'];
 
     	 $engine = $engines['mysql'];
 
-    	 $settings = file($base_path_env);
+    	 $settings = file($env_file);
 
          foreach ($settings as $line){
          	$split = explode('=', $line);

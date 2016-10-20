@@ -2,31 +2,31 @@
 
 class Register extends Controller {
 
-        protected $params;
+      protected $params;
 
-        public function __construct($params){
+      public function __construct($params){
 
              parent::__construct($params);
              
-        }
+      }
 
-        // @Override 
+      // @Override 
 
-        public function index($models){
+      public function index($models){
 
            switch($this->params['category']){
                case "contentprovider":
-                   $arrayInputs = array();
+                   $arrayInputs = array('owner' => $this->params['category']);
                break;
                case "basicuser":
-                   $arrayInputs = array();
+                   $arrayInputs = array('owner' => $this->params['category']);
                break;
            }
 
            Response::view('site/register/index', $arrayInputs);     
-        }
+      }
 
-        public function createuser($models){ # '/register/createuser/(basicuser|contentprovider)'
+      public function createuser($models){ # '/register/createuser/(basicuser|contentprovider)'
 
           $json = array();
 
@@ -55,11 +55,14 @@ class Register extends Controller {
                    break;
                }
 
-               // Auth::create($models['User'], $sanitizedInputs);
+               Auth::create($models['User'], $sanitizedInputs);
+               System::fire('newUserRegistered', $sanitizedInputs, $models['AppActivity']);
+
+               sleep(2);
           }     
 
           Response::json($json); 
-        }
+      }
 
   }
 

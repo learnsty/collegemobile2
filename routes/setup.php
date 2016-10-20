@@ -22,12 +22,20 @@
  Router::bind('/', array());
  
  Router::bind('/login', array());
+
+ Router::bind('/account/forgotpassword', array('models' => array('User', 'UserRole')));
+
+ Router::bind('/account/resetpassword', array('models' => array('User', 'UserRole')));
+
+ Router::bind('/account/profile', array('models' => array('User', 'UserRole')));
+
+ Router::bind('/account/activate', array('models' => array('User')));
  
  Router::bind('/register/@category', array('models' => array(), 'params' => array('category' => '/^[a-z]+/i')));
  
- Router::bind('/teach', array('models' => array('')));
+ Router::bind('/teach', array('models' => array('Teacher')));
  
- Router::bind('/learn', array('models' => array('')));
+ Router::bind('/learn', array('models' => array('Student')));
  
  Router::bind('/scorm/runtime/', array('models' => array()));
  
@@ -38,10 +46,9 @@
  
  /* Partial Views (AngularJS Templates) */
 
- Router::bind('/teach/feeds/', array('models' => array(''), 'ajax' => true));
+ Router::bind('/teach/', array('models' => array('Project'), 'ajax' => true));
  
- Router::bind('/learn/feeds/', array('models' => array(''), 'ajax' => true));
- 
+ Router::bind('/learn/', array('models' => array('Project'), 'ajax' => true));
  
  
  
@@ -50,9 +57,11 @@
  
  /* JSON APIs */
 
- Router::bind('/login/authenticate/', array('verb' => 'post', 'models'=> array('User', 'Throttle', 'UserRole'), 'ajax' => true));
+ Router::bind('/login/authenticate/@fingerprint', array('verb' => 'post', 'models'=> array('User', 'UserThrottle', 'UserRole'), 'ajax' => true, 'params' => array('fingerprint' => '/[a-z0-9_]+/i')));
  
  Router::bind('/register/createuser/@category', array('verb' => 'post', 'models' => array('User', 'UserRole'), 'ajax' => true, 'params' => array('category' => '/^[a-z]+/i')));
+
+ Router::bind('/activity/streams', array('models' => array('AppActivity')));
 
  Router::bind('/webhook/git-payload', array('verb' => 'post', 'models' => array()));
  

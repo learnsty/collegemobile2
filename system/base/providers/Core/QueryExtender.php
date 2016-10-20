@@ -79,7 +79,7 @@ class QueryExtender {
      	 $this->attribs = $schemaAttribs;
      }
 
-     public function distinct(){
+     public function getDistinct(){
 
         return $this;
      }
@@ -120,16 +120,16 @@ class QueryExtender {
 
      private function prepareSelectPlaceholder($props){
          
-         $this->paramValues = array_values($props); 
+         $this->paramValues = array_pluck(array_values($props), 1); 
 
-         return array_map('update_in_keys', array_keys($props));
+         return array_map('update_placeholder', $props);
      }
 
      private function prepareUpdatePlaceholder($props){
 
-        $this->paramValues = array_values($props); 
+        $this->paramValues = array_pluck(array_values($props), 1); 
 
-        return array_map('update_in_keys', array_keys($props));
+        return array_map('update_placeholder', $props);
      }
 
      private function parmeterizeValues($params){

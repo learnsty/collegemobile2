@@ -1,9 +1,5 @@
 <?php
-   
-    define('MEMCACHED_HOST', '127.0.01');
-    
-    define('MEMCACHED_PORT', '11211');    
-    
+ 
    /*!------------------------------------------------------
     ! 
     ! In the begining, We need to include the Composer class

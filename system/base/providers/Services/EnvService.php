@@ -1,4 +1,9 @@
 <?php
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
+ * {EnvService.php}
+ */
 
 namespace Providers\Services;
 
@@ -84,7 +89,22 @@ class EnvService {
 
       
         public function exposeEnvironment($root){
-           
+
+           $env_file = $this->appPaths->base . '.env';
+           $app_key = '';
+           if(file_exists($env_file)){
+               // get the contents of the file
+               $settings = file($env_file);
+
+               // extract the application key
+               foreach ($settings as $line){
+                  $split = explode('=', $line);
+                  if(index_of($split[0], 'app_') === 0){
+                      $app_key = $split[1];
+                  }
+               }
+           }
+
            $arr = array(
                   /* paths */
                   'app.path.base'=>$this->appPaths->base,
@@ -96,12 +116,12 @@ class EnvService {
 
                   /* app specifics */
                   'app.root'=> $root,
-                  'app.key'=> '',
-                  'app.custom.sessionname' => '',
+                  'app.key'=> $app_key,
+                  'app.custom.sessionname' => $this->config['custom_session_cookie_name'],
                   'app.status' => $this->config['app_environment'],
-                  'app.settings.cookie'=>$this->config['app_cookies'],
-                  'app.uploadtarget'=>$this->config['app_uploads']['upload_target'],
-                  'app.extractuploadedzip'=>$this->config['app_uploads']['can_extract_zip'], #default: TRUE
+                  'app.settings.cookie'=> $this->config['app_cookies'],
+                  'app.uploadtarget'=> $this->config['app_uploads']['upload_target'],
+                  'app.extractuploadedzip'=> $this->config['app_uploads']['can_extract_zip'], #default: TRUE
                   'app.maxuploadsize' => $this->config['app_uploads']['max_upload_size'] # default: 10MB
              );
 

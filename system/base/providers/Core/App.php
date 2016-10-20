@@ -1,4 +1,9 @@
 <?php
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
+ * {App.php}
+ */
 
 namespace Providers\Core;
 
@@ -26,6 +31,12 @@ class App {
 
      private $os;
 
+     /**
+     * @var array
+     */ 
+
+     protected $cookieQueue;
+
      protected $hasCachedModels;
 
      protected $resolver;
@@ -36,6 +47,14 @@ class App {
 
      protected $instances;
 
+     /**
+     * Constructor.
+     *
+     * @param void
+     *
+     * @scope public
+     */
+
      public function __construct(){
 
         if(!$this->inCLIMode()){
@@ -44,6 +63,8 @@ class App {
         }     
 
         $this->instances = array();
+
+        $this->cookieQueue = array();
 
         $this->hasCachedModels = FALSE;
 
@@ -109,11 +130,21 @@ class App {
          $this->dbservice->connect($env_path);
      }
 
+     public function getCookieQueue(){
+
+         return $this->cookieQueue;
+     }
+
+     public function pushCookieQueue($ckey, $cval){
+
+         $this->cookieQueue[$ckey] = $cval;
+     }
+
      public function initHTTPResolver(){
 
      	 $this->resolver->draftRouteHandler(strtolower(Request::method()));
 
-     	 $this->resolver->handleCurrentRoute($this->getInstance('Router'), $this->getInstance('System'));
+     	 $this->resolver->handleCurrentRoute($this->getInstance('Router'), $this->getInstance('System'), $this->getInstance('Auth'));
 
      }
 
@@ -153,13 +184,13 @@ class App {
                $this->instances['Session'] = Session::createInstance($this->envservice->getConfig('session_driver'));
                $this->instances['Response'] = Response::createInstance();
          	   $this->instances['Request'] = Request::createInstance();
-               $this->instances['Cache'] = Cache::createInstance($this->envservice->getConfig('cache_driver'));
+               $this->instances['Cache'] = Cache::createInstance($this->envservice->getConfig('app_cache'));
                $this->instances['Router'] = Router::createInstance();
                $this->instances['Validator'] = Validator::createInstance();
          	   $this->instances['File'] = File::createInstance();
-         	   $this->instances['Auth'] = Auth::createInstance();
+         	   $this->instances['Auth'] = Auth::createInstance($this->envservice->getConfig('app_auth'));
                $this->instances['Helpers'] = Helpers::createInstance();
-               $this->instances['Mail'] = Mail::createInstance($this->envservice->getConfig('mail_driver'));
+               $this->instances['Mail'] = Mail::createInstance($this->envservice->getConfig('app_mails'));
                $this->instances['TextStream'] = TextStream::createInstance();
          }  
      }

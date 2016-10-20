@@ -1,12 +1,10 @@
 <?php
 
-
+$CLASSMAP = require './class_maps.php';
 
 function __autoload($class){ // __autoload is supported in PHP 5.0.0 - 5.2.0 
 
-       global $CLASSMAP;
-
-       $DIR = dirname(__DIR__);
+       $DIR = __DIR__;
        
        foreach($CLASSMAP as $key => $val){
        	    if(substr($key, 1) == $class){ // in PHP 5.0.0 - 5.2.0, the leading backward slash is always missing!!

@@ -18,13 +18,13 @@
 
 	 }  
  
-	 protected function index($models){  
+	 public function index($models){  
 
 		 # code... 
 
 	 } 
 
-	 protected function streams($models){  
+	 public function streams($models){  
 
 		   $updateCount = Session::get('update_count'); #default 0
 

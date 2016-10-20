@@ -67,38 +67,46 @@
      return NULL;
  });*/
 
- System::on('newUserRegistered', function(array $userDetails){
+ System::on('newUserRegistered', function(array $userDetails, AppActivity $activity){
  
      $ip = Request::ip();
 
      Logger::info("{App Activity}->newUserRegistered  " . (implode(', ', $userDetails)) . " IP address: " . $ip, 'events');
 
-     return NULL;
- });
-
- System::on('userCreatedClassroom', function($userDetails, $classRoom){
-
-     $ip = Request::ip();
-
-     Logger::info("{App Activity}->userCreatedClassroom  " . (implode(', ', $userDetails)) . " IP address: " . $ip, 'events');
+     TextStream::setEvents($activity, array(($userDetails['fullname'] ."|". $userDetails['email']),'just registered','on CollegeMobile'));
 
      return NULL;
  });
 
- System::on('userJoinedClassroom', function($userDetails, $classRoom){
+ System::on('userCreatedClassroom', function(array $userDetails, AppActivity $activity, $classRoomName){
 
      $ip = Request::ip();
 
-     Logger::info("{App Activity}->userJoinedClassroom  " . (implode(', ', $userDetails)) . " IP address: " . $ip, 'events');
+     Logger::info("{App Activity}->userCreatedClassroom  " . ($userDetails['fullname']) . " IP address: " . $ip, 'events');
+
+    TextStream::setEvents($activity, array(($userDetails['fullname'] ."|". $userDetails['email']),'just created classroom', $classRoomName));
 
      return NULL;
  });
 
- System::on('userLeftClassroom', function($userDetails, $classRoom){
+ System::on('userJoinedClassroom', function(array $userDetails, AppActivity $activity, $classRoomName){
 
      $ip = Request::ip();
 
-     Logger::info("{App Activity}->userLeftClassroom  " . (implode(', ', $userDetails)) . " IP address: " . $ip, 'events');
+     Logger::info("{App Activity}->userJoinedClassroom  " . ($userDetails['fullname']) . " IP address: " . $ip, 'events');
+
+     TextStream::setEvents($activity, array(($userDetails['fullname'] ."|". $userDetails['email']),'just joined classroom', $classRoomName));
+
+     return NULL;
+ });
+
+ System::on('userLeftClassroom', function($userDetails, AppActivity $activity, $classRoomName){
+
+     $ip = Request::ip();
+
+     Logger::info("{App Activity}->userLeftClassroom  " . ($userDetails['fullname']) . " IP address: " . $ip, 'events');
+
+     TextStream::setEvents($activity, array(($userDetails['fullname'] ."|". $userDetails['email']), 'just left classroom', $classRoomName));
 
      return NULL;
  });

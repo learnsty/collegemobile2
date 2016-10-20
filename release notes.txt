@@ -1,16 +1,16 @@
-################# LearnstyPHP MINI FRAMEWORK  ###################
+################# Vyke Mini Framework  ###################
 
 
 
-Codename : LP-F
+Codename : VMF
 Version : 1.0.0-beta
 BuildID : LP-56hrtd679dhje7784bzva
 GUID : 2648-0a43-687b-75382654-c142
-Author(s): Micheal Akpobome & Ifeora Okechukwu
-Copyright (c) 2016
+Author(s): Ifeora Okechukwu
+Copyright (c) 2016 - 2017
 
 SIDE NOTE
- - CollgeMobile is very grateful to Mr. Micheal Akpobome for the concept and inspiration for this PHP mini framework. 
+ - Vyke Project Team is very grateful to Mr. Micheal Akpobome for the concept and inspiration for this PHP mini framework. 
 
 
 CHANGE LOG (8) - v1.0.0-beta
@@ -20,7 +20,7 @@ CHANGE LOG (8) - v1.0.0-beta
  - Made Session cookie hidden from client (browser) to prevent possible XSS attacks
  - Included '.log' file to write logs for easy debugging
  - Removed 'url' query parameter from '.htaccess' rewrite path
- - Included command-line options for varying tasks e.g. Model File Creation, COntroller File Creation, e.t.c
+ - Included command-line options for varying tasks e.g. Model File Creation, Controller File Creation, e.t.c
  - Included 'route' folder to serve as central location for route definitions
  - Created 'packages' folder to serve as storage for composer packages & npm modules (especially Grunt for task running)
 
@@ -41,15 +41,14 @@ CAVEATS (0)
 
 
 FINAL UPDATES FOR THIS VERSION (v1.0.0-beta) - timeline early 2017
- - Implement 'Mail' component class to make use of mailing service code
- - Implement 'Auth' component class fully to support User Permissions, JWT and User Login Throttling
+ - Complete route definition command from command-line
+ - Include configuration support for AWS-S3, Cloudinary & Auth0, StormPath for file uploads and authentication respectively 
  - Complete 'Learnsty\ErrorReporter\Reporter' code for reporting errors to central app monitor dashboard
  - Hot fixes for known bugs
 
-COMING UPDATES FOR NEXT VERSION (v1.0.1-beta) - [patch 1] - timeline mid 2017
+COMING UPDATES FOR NEXT VERSION (v1.0.1-beta) - [patch 1] - timeline mid 2017 - late 2017
  - Implement Encryption for all cookies (session cookie inclusive) and other mission-critical data
- - Implement Raw TCP socket system for easy socket programming 
- - Complete route definition command from command-line
+ - Implement Raw TCP socket system for easy full duplex communications programming
  - Final fixes for known bugs
    
 COMING UPDATES FOR NEXT VERSION (v1.0.2-rc) - [patch 2 {release candidate}] - timeline late 2017

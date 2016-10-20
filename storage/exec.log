@@ -6,17 +6,3 @@ INFO:2016-10-10 12:14:49 ~ Current route was found successfully.... Yeepee!
 
 INFO:2016-10-11 14:24:18 ~  Neeeelly: 1
 
-INFO:2016-10-13 19:45:57 ~  Neeeelly: 1
-
-INFO:2016-10-13 19:45:58 ~ The Current Route: /login
-
-INFO:2016-10-13 19:45:58 ~ Current HTTP Verb: get Requested: get
-
-INFO:2016-10-13 19:45:58 ~ csrf middleware executing: method=GET route=/login
-
-INFO:2016-10-13 19:45:58 ~ \Login  index
-
-ERROR:2016-10-13 19:45:58 ~ [LearnstyPHP - 1]  Call to private method Router::getCurrentRouteParameters() from context 'Providers\Core\HTTPResolver' in D:\wamp\www\CollegeMobile\system\base\providers\Core\HTTPResolver.php on line 68
-
-INFO:2016-10-13 19:45:58 ~ Application is Shutting Down...
-

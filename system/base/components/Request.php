@@ -100,7 +100,6 @@ class Request {
         
           $qs = static::getInfo('QUERY_STRING');
         
-          \Logger::info(" PIPO " . $this->method);
           switch($this->method){
                case "JSONP":
                case "GET": 
@@ -249,6 +248,12 @@ class Request {
      }
 
      public static function getCookie($key){
+           
+          $queue = $GLOBALS['app']->getCookieQueue();
+          
+          if(array_key_exists($key, $queue)){
+              return $queue[$key];
+          } 
 
           if(static::hasCookie($key)){
                return $_COOKIE[$key];

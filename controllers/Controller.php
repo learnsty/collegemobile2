@@ -10,19 +10,14 @@ class Controller {
              
     }
 
-    protected function index($models){
+    public function index($models){
 
         Response::view('site/index', array());	
     } 
 
-    protected function feeds($models){
+    public function feeds($models){
         
         // Prep Code
-    }
-
-    protected function profile($models){
-
-    	// Prep Code
     }
 
 }

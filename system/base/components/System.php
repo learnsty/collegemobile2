@@ -136,17 +136,17 @@ class System {
        return $this->faultedMiddlewares;
     }
 
-    public function setCustomEvent($name, $function){
+    private function setCustomEvent($name, $function){
 
         $this->customEventHandlers[$name] = $function;
     }
 
-    public function executeAllMiddlewares($route){
+    public function executeAllMiddlewares($route, $auth){
            $result = array();
            // PHP 5.0+
            foreach($this->middlewares as $name => $callback){
              if(is_callable($callback)){
-                $result[] = $callback($route);
+                $result[] = $callback($route, $auth);
              }else{
                 throw new \Exception("Error Processing Request >> Middleware Callback Undefined");
              }
@@ -154,6 +154,11 @@ class System {
                 $index = ((count($result)) - 1);
                 if($result[$index] === FALSE){
                      $this->faultedMiddlewares[] = $name;
+                }else{
+                    if($GLOBALS['HTTP_CODE'] === 302 
+                        || $GLOBALS['HTTP_CODE'] === 301){
+                        exit;
+                    }
                 }
              }catch(\Exception $e){}
            }

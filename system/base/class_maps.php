@@ -32,6 +32,7 @@ return array(
      "\\Providers\\Tools\\InputFilter" => $compDir . "/providers/Tools/InputFilter",
      "\\Providers\\Tools\\RedisStorage" => $compDir . "/providers/Tools/RedisStorage",
      "\\Providers\\Tools\\TCPSocket" => $compDir . "/providers/Tools/TCPSocket",
+     "\\Providers\\Tools\\LoginThrottle" => $compDir . "/providers/Tools/LoginThrottle",
      "\\Providers\\Tools\\TemplateRunner" => $compDir . "/providers/Tools/TemplateRunner",
         
      /* Policies */
@@ -60,7 +61,15 @@ return array(
 
      "\\Model" => $compDir . "/../../models/Model",
      "\\User" => $compDir . "/../../models/User",
+     "\\UserRole" => $compDir . "/../../models/UserRole",
+     "\\UserThrottle" => $compDir . "/../../models/UserThrottle",
      "\\LearnerData" => $compDir . "/../../models/LearnerData",
+     "\\Teacher" => $compDir . "/../../models/Teacher",
+     "\\AppActivity" => $compDir . "/../../models/AppActivity",
+     "\\Student" => $compDir . "/../../models/Student",
+     "\\Courseware" => $compDir . "/../../models/Courseware",
+     "\\Project" => $compDir . "/../../models/Project",
+     "\\Classroom" => $compDir . "/../../models/Classroom",
 
      /* Controllers */
 
@@ -68,7 +77,8 @@ return array(
      "\\Login" => $compDir . "/../../controllers/Login",
      "\\Register" => $compDir . "/../../controllers/Register",
      "\\Logout" => $compDir . "/../../controllers/Logout",
-     "\\Activity" => $compDir . "/../controllers/Activity",
+     "\\Activity" => $compDir . "/../../controllers/Activity",
+     "\\Account" => $compDir . "/../../controllers/Account",
      "\\Scorm" => $compDir . "/../../controllers/Scorm",
      "\\Learn" => $compDir . "/../../controllers/Learn",
      "\\Teach" => $compDir . "/../../controllers/Teach"

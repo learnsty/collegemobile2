@@ -2,12 +2,13 @@
 
 class LearnerData extends Model {
 
-    protected $table = 'tbl_user';
+    protected $table = 'tbl_scorm_data';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'data_id';
 
     protected $relations = array(
-       '<model_class_name>' => '<foreign_key>'
+       'Student' => 'student_id',
+       'Courseware' => 'courseware_id'
     );
 
     public function __construct(){
@@ -17,7 +18,7 @@ class LearnerData extends Model {
 
     public function getCMIJSON(){
  
-              
+        // return $this->get()->exec();      
     }
     
 

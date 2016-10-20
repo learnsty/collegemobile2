@@ -40,7 +40,7 @@ class HTTPResolver{
 
  	 }
 
-     public function handleCurrentRoute(Router $router, System $sys){
+     public function handleCurrentRoute(Router $router, System $sys, Auth $auth){
             
             $uri = Request::uri();
 
@@ -55,14 +55,12 @@ class HTTPResolver{
             $method = $this->getResolverMethod();
             $uriParts = $this->getResolverURIParts($router->getCurrentRouteUrl());
 
-            $models = $router->getRouteSettings($method, $sys);
+            $models = $router->getRouteSettings($method, $sys, $auth);
 
             $GLOBALS['app']->cacheModelInstances($models);
             
             $controllerClass = '\\' . (array_key_exists(0, $uriParts)? ucfirst($uriParts[0]) : 'Controller');
             $controllerMethod = (array_key_exists(1, $uriParts) && index_of($uriParts[1], '@') != 0)? $uriParts[1] : 'index';
-
-            \Logger::info($controllerClass . "  " . $controllerMethod);
 
             if(class_exists($controllerClass)){
                  $this->currentController = new $controllerClass($router->getCurrentRouteParameters());

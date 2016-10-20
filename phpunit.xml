@@ -13,17 +13,17 @@
          verbose="true"
 ><!-- syntaxCheck="false" -->
     <testsuites>
-        <testsuite name="LearnstyPHP Test Suite">
-            <directory suffix="Case.php">./tests/</directory>
+        <testsuite name="Vyke Test Suite">
+            <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
     <!--<filters>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./controllers</directory>
             <exclude>
-                <file>./src/Illuminate/Foundation/start.php</file>
-                <file>./src/Illuminate/Foundation/Console/Optimize/config.php</file>
-                <directory>./src/Illuminate/Pagination/views</directory>
+                <file>./app.php</file>
+                <file>./public/index.php</file>
+                <directory>./views</directory>
             </exclude>
         </whitelist>
     </filters>-->

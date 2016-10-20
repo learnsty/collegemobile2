@@ -6,21 +6,50 @@
   ! route requests meetup with special prerequisites before 
   ! these requests are allowed to PASS and the route activated
   !
-  ! We set middlewares up here...
+  ! We set up middlewares here...
   !
+  !
+  !* Vyke Mini Framework (c) 2016
+  !* 
+  !* {setup.php}
   !*
-  !*
-  !*
-  !*
-  !*
+  !* NOTE: DON'T CHANGE THE ORDER OF THE MIDDLEWARES HERE
   !-------------------------------------------------------*/
+
+  // Initilally, every client is logged in as a guest (only if there is no actively logged known user)
+
+  System::middleware('redirectIfUser', function($currentRoute, $auth){
+      $result = TRUE;
+      if(Request::method() == 'GET'){
+          if(!ends_with($currentRoute, '/feeds')){ // route permission (Access Reaffirmation)
+              if(Auth::check($currentRoute)){
+                  $role = $auth->getUserRole();
+                  if($role == 'Teacher' || $role == 'Learner'){
+                      return Response::redirect('/' . strtolower($role) . '/feeds');
+                  }   
+              }
+          }  
+      }  
+      return $result;   
+  });
+
+  System::middleware('redirectIfGuest', function($currentRoute, $auth){
+      $result = TRUE;
+      if(Request::method() == 'GET'){
+         if(!starts_with($currentRoute,'/login')){
+              if(!Auth::check($currentRoute)){ // route premissions (Access Control)
+                  $auth->setReturnUrl($currentRoute);
+                  return Response::redirect('/login/' . '?return_to=' . $currentRoute);      
+              }    
+         }
+      }
+      return $result;   
+  });
 
   System::middleware('csrf', function($currentRoute){
       $result = TRUE;
-      Logger::info("csrf middleware executing: method=" . Request::method() . " route=" . $currentRoute);
       if(Request::method() == 'POST'){
-         if($currentRoute == '/login/authenticate' 
-             || $urrentRoute == '/register/createuser'){
+         if(starts_with($currentRoute, '/register')){
               if(Request::isAjax()){
                   $token = array();
                   $token['_token'] = Request::rawHeader('X-CSRF-Token');
@@ -36,7 +65,7 @@
       return $result;
   });
 
-  System::middleware('modHeaders', function($currentRoute){
+  System::middleware('responseHeaders', function($currentRoute, $auth){
         
         // if the request is for SSE (Server-Sent Events), then override caching default for the browser
         if(index_of($currentRoute, 'activity/streams') > -1){
@@ -44,9 +73,11 @@
               if(Request::isAjax()){
 
                     TextStream::setForAjax();
+                
               }
 
               Response::header("Cache-Control", "no-cache");
+
         }else{
             // if the request is for HTML payload/view/page then
             if(index_of(Request::rawHeader('Accept'), 'text/html') > -1){
@@ -57,16 +88,6 @@
         }
             
         return TRUE;
-  });
-
-  System::middleware('userPermissions', function($currentRoute){
-      $signedCookie = NULL;
-      $result = TRUE;
-      if(Request::hasCookie('_marker__stat_002')){
-          $signedCookie = Request::getCookie('_marker__stat_002');
-      }
-      // validate signed cookie (JWT) 
-      return $result;
   });
 
 ?>

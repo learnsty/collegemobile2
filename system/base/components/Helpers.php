@@ -48,34 +48,41 @@ class Helpers {
 
 
     public static function limitWords($string, $word_limit){
-        $words = explode(" ",$string);
-        return implode(" ",array_splice($words,0,$word_limit));
+        $words = explode(" ", $string);
+        return implode(" ",array_splice($words, 0, $word_limit));
     }
 
 
     public static function dateSet($date,$dateadd){
-        $date = new DateTime($date);
-        date_add($date, new DateInterval("P".$dateadd."D"));
+        $date = new \DateTime($date);
+        date_add($date, new \DateInterval("P".$dateadd."D"));
+        //date_sub();
         return $date->format("d-m-Y");
     }
 
-    public static function encodeValue($value,$padding='[abcd1234abcdefg]') {
-    	if(!static::emptyCheck($padding)) {
-    		$value = urlencode(base64_encode($padding.$value.$padding));
-    	} else {
-    		$value = urlencode(base64_encode(trim($value)));
-    	}
-    	return $value;
+    public static function encodeValue($value, $padding = '[abcd1234abcdefg]') {
+      	if(!static::emptyCheck($padding)){
+
+      		      $value = urlencode(base64_encode($padding.trim($value).$padding));
+
+      	}else{
+
+      		      $value = urlencode(base64_encode(trim($value)));
+      	}
+
+      	return $value;
     }
 
 
 
-    public static function decodeValue($value, $padding='[abcd1234abcdefg]') {
+    public static function decodeValue($value, $padding = '[abcd1234abcdefg]') {
     	
     	$value = base64_decode(urldecode($value));
-    	if(!static::emptyCheck($padding)) {
-    		$value = str_replace($padding,'',$value);
+    	if(!static::emptyCheck($padding)){
+
+    		    $value = str_replace($padding,'',$value);
     	}
+
     	return $value;
     }
 
@@ -192,7 +199,7 @@ class Helpers {
           return base64_encode(json_encode($item));
        }
 
-       public static function createJWT(array $settings, $s_key, $h_key, $hash_algos = "HS256"){
+       public static function createJWT(array $props, $hash_key, $hash_algos = "HS256"){
              // @TODO: might change from HMAC Keys to Asymmetric Public/Private Keys at production (RSA)
              $header = array(
                    "typ" => "JWT",
@@ -203,18 +210,18 @@ class Helpers {
               
               // reserved claims
               $payload = array(
-                  "iss" => "LEARNSTY_INC", // issuer -- private claim
+                  "iss" => $props['iss'], // issuer -- private claim 
                   "iat" => $_time, // issued at -- private claim
-                  "sub" => "", // sub -- private claim
-                  "exp" => ($_time+3600), // expiration -- private claim
-                  "jti" => $s_key, // jwt identifier -- used to prevent token replay attacks -- private claim
-                  "profileFields" => $settings // -- public claims
+                  "sub" => $props['sub'], // sub -- private claim
+                  "exp" => ($_time+36000), // expiration -- private claim
+                  "jti" => $props['jti'], // jwt identifier -- used to prevent token replay attacks -- private claim
+                  "userPermissons" => $props['permissions'] // -- public claims
               );
               
               $header = static::encodeJWTObject($header);
               $payload = static::encodeJWTObject($payload);
               
-              $signature = hash_hmac('sha256', ($header.".".$payload), $h_key);
+              $signature = hash_hmac('sha256', ($header.".".$payload), $hash_key);
               $signature = base64_encode($signature);
 
               // This will form part and parsel of our SSO signed cookie for SWAP
@@ -232,7 +239,7 @@ class Helpers {
             $parse_obj['signature'] = $token_bits[2];
     
 
-            return $parse_obj;          
+            return static::decodeJWTObject($parse_obj);          
        }
 
        public static function uuidV4($inputstr){ // TCAPI sessionRegistration for CollegeMobile (when implemented)
@@ -257,14 +264,15 @@ class Helpers {
             
        }
        
-       public static function validateJWTObject(array $jwt_arr, $hash_key){ 
-              // pick both $jwt_arr and $h_key from the redis server
+       public static function validateJWT(array $jwt_arr, $hash_key){ 
+              // pick both $jwt_arr and $hash_key from the redis server
               $jwt_plain = static::decodeJWTObject($jwt_arr); 
               $head = $jwt_plain['header'];
               $pload= $jwt_plain['payload'];
               $signature = $jwt_plain['signature'];
               $time = time();
               $message = ($jwt_arr['header'].".".$jwt_arr['payload']);
+
               // prevents timing attacks
               if(static::verifyHmac('sha256', $message, $hash_key, $signature) /* && $time <= $pload['exp'] */){
                   return $pload;
@@ -274,14 +282,9 @@ class Helpers {
        }
        
        public static function decodeJWTObject(array $jwt_obj){
-             $token_bits = array();
-             /*array_walk($token_bits, function(&$value, $key){
-                $value = base64_decode((string) $value);
-                if($key == "header" || $key == "payload"){  
-                    $value = json_decode($value, TRUE);
-                }  
-             });*/
-
+             
+            $token_bits = array();
+             
             foreach ($jwt_obj as $key => $value) {
                 $value = base64_decode((string) $value);
                 if($key == "header" || $key == "payload"){  
@@ -295,7 +298,7 @@ class Helpers {
 
        public static function generateCode($prefix = ""){
 
-            return uniqid($prefix, true);
+            return uniqid($prefix, false);
        }
 
 

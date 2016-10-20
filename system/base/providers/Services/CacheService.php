@@ -1,4 +1,9 @@
 <?php
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
+ * {CacheSerivce.php}
+ */
 
 namespace Providers\Services;
 

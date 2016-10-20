@@ -82,9 +82,6 @@ class Router {
      public function findRoute($uri){
 
          $routeUrlParts = explode('/', preg_replace('/^\/|\/$/', '', $uri));
-
-         // assumption for starting
-         $this->currentRouteUrl = implode('/', $routeUrlParts);
  
          $routes = array_keys($this->routesTable);
 
@@ -137,7 +134,7 @@ class Router {
      	 return FALSE;
      }
 
-     public function getRouteSettings($requestMethod, System $instance){
+     public function getRouteSettings($requestMethod, System $instance, Auth $auth){
 
          $models = array();
          $settingsList = NULL;
@@ -194,7 +191,7 @@ class Router {
                  }   
          	 }
 
-             if(!$instance->executeAllMiddlewares($this->currentRouteUrl)){
+             if(!$instance->executeAllMiddlewares($this->currentRouteUrl, $auth)){
                  throw new \Exception("System Middleware(s) ['" . (implode(', ', $instance->getFaultedMiddlewares())) . "'] have truncated Request on Route >> ['" . $this->currentRouteUrl . "'] ");
              }
 

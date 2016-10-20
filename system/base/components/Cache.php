@@ -8,18 +8,20 @@ class Cache {
 
    private $cache_service;
 
-   private function __construct($driver){
+   private function __construct(array $options){
+
+       $driver = $options['cache_driver'];
 
        if($driver === "memcached"){  
 
-            $this->cache_service = new CacheService();
+            $this->cache_service = new CacheService($options);
        }
    }
 
-   public static function createInstance($driver){
+   public static function createInstance(array $options){
 
        if(static::$instance == NULL){
-             static::$instance = new Cache($driver);
+             static::$instance = new Cache($options);
              return static::$instance;
         }
    }
@@ -32,6 +34,11 @@ class Cache {
    public static function get($key){
 
    	   static::$instance->cache_service->get($key);
+   }
+
+   public static function has($key){
+
+    
    }
 
 }

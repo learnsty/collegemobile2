@@ -11,14 +11,14 @@ class Webhook extends Controller {
 
        // @Override
 
-       protected  function index($models){
+       public  function index($models){
 
            # code ...
        }
 
        public function git_payload($models){
 
-            $base_repo_path = "https://raw.githubusercontent.com/<account-name>/<repo-name>/";
+            $base_repo_path = "https://raw.githubusercontent.com/learnsty/collegemobile/";
 
             $base_project_path = $env['app.path.base'];
 
@@ -28,9 +28,9 @@ class Webhook extends Controller {
 
             $signature = Request::rawHeader('X-Hub-Signature');
 			
-			if(!$signature){
+			      if(!$signature){
                
-                return Response::text("Somethings' not Right!", 401);
+                 return Response::text("Somethings' not Right!", 401);
             }
 
             list($algos, $hash) = explode('=', $signature);
@@ -48,7 +48,7 @@ class Webhook extends Controller {
                 $full_repo_path = $base_repo_path . $filepath;
                 $full_project_path = $base_project_path . $filepath;
                 $fetch = File::readChunk($full_repo_path);
-				File::write($full_project_path, $fetch, TRUE);
+				        File::write($full_project_path, $fetch, TRUE);
             }
 
             Response::text(NULL, 204);

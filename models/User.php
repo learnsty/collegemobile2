@@ -4,21 +4,19 @@ class User extends Model /* implements AuthService */ {
 
     protected $table = 'tbl_user';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'user_id';
 
     protected $relations = array(
-       '<model_class_name>' => '<foreign_key>'
+       'Student' => 'student_id',
+       'ContentProvider' => 'provider_id'
     );
 
     public function __construct(){
 
         parent::__construct();
-    }
-
-    public function getCredentials(){
- 
-              
-    }
-    
+    }    
 
 }
+
+
+?>

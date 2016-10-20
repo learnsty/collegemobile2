@@ -10,6 +10,13 @@ class Scorm extends Controller {
              
         }
 
+        // @Override
+
+        public function index($models){
+
+             
+        }
+
         public function tracking($models){
 
              $inputs = Request::input()->getFields(); // $_GET | $_POST

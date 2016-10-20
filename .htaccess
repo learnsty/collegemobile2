@@ -1,6 +1,9 @@
 Options -MultiViews
 ReWriteEngine On
 
+# Redirect Trailing Slashes...
+# RewriteRule ^(.*)/$ /$1 [L,R=301]
+
 ReWriteCond %{REQUEST_FILENAME} !-d
 ReWriteCond %{REQUEST_FILENAME} !-f
 

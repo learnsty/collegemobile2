@@ -1,4 +1,9 @@
 <?php
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
+ * {NativeSessionService.php}
+ */
 
 namespace Providers\Services;
 
@@ -20,6 +25,16 @@ class NativeSessionService implements SessionAccessInterface {
     protected $previousReqTime;
 
     protected $novelReqTime;
+
+   /**
+    *
+    * Constructor
+    *
+    *
+    *
+    * @param void
+    * @api
+    */
 
 	public function __construct(){
 
@@ -47,6 +62,9 @@ class NativeSessionService implements SessionAccessInterface {
 	/**
 	 *
 	 *
+	 *
+	 *
+	 *
 	 * @param string $key
 	 * @return bool 
 	 */
@@ -59,8 +77,11 @@ class NativeSessionService implements SessionAccessInterface {
 	/**
 	 *
 	 *
+	 *
+	 *
 	 * @param void
 	 * @return string
+	 * @api
 	 */
 
 	public function getId(){
@@ -71,11 +92,14 @@ class NativeSessionService implements SessionAccessInterface {
 	/**
 	 *
 	 *
+	 *
+	 *
 	 * @param void
 	 * @return void
+	 * @scope private
 	 */
 
-	public function cacheRequestTime(){
+	private function cacheRequestTime(){
          $reqtime = array_key_exists('REQUEST_TIME', $_SERVER) ? $_SERVER['REQUEST_TIME'] : NULL;
          if(!isset($reqtime)){
          	$reqtime = time()-2; // just an estimation... no biggie!
@@ -91,7 +115,7 @@ class NativeSessionService implements SessionAccessInterface {
 	}
 
 	public function setSessionCookie(){
-        $params = $GLOBALS['env']['app.settings.cookie'];
+        $params = $env['app.settings.cookie'];
 $this->sessionId = (array_key_exists($this->sessionName, $_COOKIE))? $_COOKIE[$this->sessionName] : custom_session_id(TRUE);
         // regenerate id manually for large diff in request times (This handles browsers which dont support {httpOnly})
 		 if(($this->previousReqTime - $this->novelReqTime) >= 400){ 
@@ -105,8 +129,10 @@ setcookie($this->sessionName, $this->sessionId, $this->sessionCookieExpires, '/'
 	/**
      *
      *
+     *
      * @param void
      * @return string 
+     * @api
      */
 	
 	public function getName(){
@@ -166,7 +192,6 @@ setcookie($this->sessionName, $this->sessionId, $this->sessionCookieExpires, '/'
         // We are interfering to protect client user from XSS attack vectors -- via JavaScript document.cookie)
         $this->sessionBag = array();
         // lets' get the session ready 
-        \Logger::info(" Neeeelly: " . ($this->sessionId == session_id()));
         if (session_id() == $this->sessionId){
 session_cache_limiter('private_no_expire'); // enable caching of response on the client (disallow on proxies)
 session_cache_expire($this->sessionCacheExpires); // setup Cache-Control to secs value (response meant for single user)

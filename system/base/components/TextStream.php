@@ -1,8 +1,13 @@
 <?php
+/*!
+ * Vyke Mini Framework (c) 2016
+ * 
+ * {TextStream.php}
+ */
 
 class TextStream {
 
-      const EVENT_HEADING = 1; # event: noupdate \n
+      const EVENT_HEADING = 1; # event: update \n
 
       const ID_HEADING = 2; # id: 3299029492 \n
 
@@ -19,13 +24,15 @@ class TextStream {
 
       private function __construct(){
 
+          set_time_limit(0); // removes time limit for script execution
+
           $this->streamText = '';
 
           $this->eventDataBlocks = array();
 
-          $this->eventDataBlockSize = 16;
+          $this->eventDataBlockSize = 4;
 
-          $this->lineSize = 12;
+          $this->lineSize = 14;
 
           $this->columns = array('subject', 'verb', 'object');
       
@@ -41,22 +48,26 @@ class TextStream {
 
       public function setForAjax(){
 
-          set_time_limit(0); // removes time limit for script execution
-
-          ignore_user_abort(FALSE); // enable/disbale automatic script exit if user disconnects
+          ignore_user_abort(TRUE); // disbale automatic script exit if user disconnects
       }
 
-      public static function getEvents(Model $activities, $noUpdateCount, $lastEventId){
+      public static function setEvents(AppActivity $activities, array $values){
 
-         $maxCheckCount = 4;
+          $combined = array_combine($this->columns, $values);
+
+          $combined['activity_id'] = Helpers::generateCode();
+
+          return $activities->setOccurence($combined);          
+
+      }
+
+      public static function getEvents(AppActivity $activities, $noUpdateCount, $lastEventId){
+
+         $maxCheckCount = 2;
 
          $events = new \stdClcass();
 
-         $events->noupdate = TRUE;
-
-         $this->includeStreamHeading('-');
-
-         $events->data = $this->streamText;
+         $events->noupdate = TRUE; // initially, we assume that there will be no update
 
           while((!connection_aborted() || !connection_timeout())){
 
@@ -67,14 +78,16 @@ class TextStream {
 
                 if(!static::$instance->isUpdateAvailable()){ 
 
-                     static::$instance->setEventDataBlocks($activities->get($this->columns, array('id'=> array('>', $lastEventId)))->exec(FALSE, $this->eventDataBlockSize));
+                     static::$instance->setEventDataBlocks($activities->getOccurence($this->columns, array('id'=> array('>', $lastEventId)), $this->eventDataBlockSize));
                 }     
 
                 if(static::$instance->isUpdateAvailable()){
 
                       $events->noupdate = FALSE;
 
-                      $events->data = static::$instance->prepareEventPayload();
+                      static::$instance->prepareEventPayload();
+
+                      $events->data = static::$instance->getStreamText();
 
                       break;
 
@@ -83,11 +96,29 @@ class TextStream {
                       --$maxCheckCount;
 
                       if($maxCheckCount === 0){
+
+                           static::$instance->includeStreamHeading('noupdate', self::EVENT_HEADING);
+
+                           if($noUpdateCount >= static::$instance->getMaxNoUpdateCount()){
+          
+                              $noUpdateCount = 0;
+
+                              $events->noupdateCount = $noUpdateCount;
+
+                              static::$instance->includeStreamHeading('5000', self::RETRY_HEADING); // retry in 5 seconds
+
+                           }else{
+
+                                $events->noupdateCount = ++$noUpdateCount;
+
+                           }
+
+                           $events->data = static::$instance->getStreamText();
                   
                            break;
                       }
                      
-                      sleep(3); // wait for 3 seconds
+                      sleep(3); // wait for 3 seconds [max -worst case: 6 seconds]
                 }
           }
 
@@ -95,9 +126,20 @@ class TextStream {
 
       } 
 
+      private function getStreamText(){
+
+          return $this->streamText;
+      }
+
       private function includeStreamHeading($line, $type = -1){
           
           $heading = '';
+
+          if(is_string($line)){
+              $lineArray = array($line);
+          }else{
+              throw new \InvalidArgumentException("Cannot not include empty line");
+          }
 
           switch($type){
              case 1:
@@ -114,7 +156,9 @@ class TextStream {
              break;
           }
 
-          $this->streamText .=  $heading . $line . PHP_EOL;
+          foreach($lineArray as $ln){
+             $this->streamText .=  $heading . $ln . PHP_EOL;
+          }   
       }
 
       public function setEventDataBlocks(array $eventData){
@@ -137,11 +181,17 @@ class TextStream {
 
              $lines = array();
 
+             $this->includeStreamHeading('update', self::EVENT_HEADING);
+
+             $lastEvent = $this->eventDataBlocks[($this->eventDataBlockSize - 1)];
+
+             $this->includeStreamHeading($lastEvent['activity_id'], self::ID_HEADING);
+
              for($x = 0; $x < $this->eventDataBlockSize; $x++){
 
                   $lines[$x] = json_encode($this->eventDataBlocks[$x]);
 
-                  $this->includeStreamHeading(/*array_slash(*/$lnes[$x]/*, $this->lineSize)*/);
+                  $this->includeStreamHeading(str_split($lnes[$x], $this->lineSize));
 
              }
 

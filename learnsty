@@ -2,7 +2,7 @@
 
 <?php
 
-	require_once './app.php';
+	require_once 'system/boot.php';
 
 	$model_path = __DIR__ . '/models/';
 

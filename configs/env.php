@@ -85,7 +85,7 @@
 
             'uploads_enabled'=> true, #options: (false, true)
 
-            'upload_target' => array( #option: ('#s3', '#cloudinary', '#local')
+            'upload_target' => array( #option: ('#aws-s3', '#cloudinary', '#local')
                     
                 'disk_id'=> "#local",
 
